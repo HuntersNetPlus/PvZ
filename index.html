@@ -482,6 +482,20 @@ body {
     font-weight: bold;
     }
 
+
+#loader-text {
+    color: #6ab2f2;
+    font-size: 18px;
+    margin-top: 15px;
+    font-weight: bold;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+    
 .product-price {
     color: #ffd700;
     font-weight: bold;
@@ -511,7 +525,10 @@ body {
 </head>
 <body>
 
-<div id="loader"><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Hourglass%20Not%20Done.webp?raw=true" style="width:200px;"></div>
+<div id="loader">
+    <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Hourglass%20Not%20Done.webp?raw=true" style="width:200px;">
+    <div id="loader-text" style="color: #6ab2f2; font-size: 18px; margin-top: 15px; font-weight: bold;">Загрузка...</div>
+</div>
 
 <!-- SCREEN 1 -->
 <div id="welcome" class="screen active" style="text-align:center;">
@@ -1236,15 +1253,27 @@ function generateOrderId() {
 
 function openScreen(id) {
     Object.values(screens).forEach(s => s.classList.remove('active'));
+    
+    // Устанавливаем текст для лоадера
+    const loaderText = document.getElementById('loader-text');
+
+    if (id === 'choose') {
+        loaderText.textContent = 'Загрузка витрины...';
+    } else if (id === 'payment') {
+        loaderText.textContent = 'Оформление заказа...';
+    } else {
+        loaderText.textContent = 'Обновление...';
+    }
+    
     loader.style.display = 'flex';
+    
     setTimeout(() => {
         loader.style.display = 'none';
         screens[id].classList.add('active');
         
-        // ДОБАВЛЕНА ЭТА СТРОКА ↓
         updateLocationTexts();
-        updateProductTexts(); // ДОБАВЬ ЭТУ СТРОКУ
-    }, 900);
+        updateProductTexts();
+    }, 2500); // Увеличил с 900 до 1500мс (1.5 секунды)
 }
 
     function selectOption(name, price) {
