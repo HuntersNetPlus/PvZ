@@ -1325,7 +1325,7 @@ function openScreen(id) {
             'Проверка статуса...'
         ];
         loaderText.textContent = phrases[0];
-        loadingTime = 5000;
+        loadingTime = 6000;
         
         // Меняем фразы каждые 1250мс (5000 / 4 фразы)
         phraseInterval = setInterval(() => {
@@ -1338,7 +1338,7 @@ function openScreen(id) {
                     loaderText.textContent = phrases[phraseIndex];
                 }, 10);
             }
-        }, 1250);
+        }, 1500);
     }
     
     loader.style.display = 'flex';
