@@ -488,12 +488,12 @@ body {
     font-size: 18px;
     margin-top: 15px;
     font-weight: bold;
-    animation: pulse 1.5s ease-in-out infinite;
+    animation: fadeInOut 0.5s ease-in-out;
 }
 
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
     
 .product-price {
@@ -526,7 +526,7 @@ body {
 <body>
 
 <div id="loader">
-    <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Hourglass%20Not%20Done.webp?raw=true" style="width:200px;">
+    <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Hourglass%20Not%20Done.webp?raw=true" style="width:200px;"><br>
     <div id="loader-text" style="color: #6ab2f2; font-size: 18px; margin-top: 15px; font-weight: bold;">Загрузка...</div>
 </div>
 
@@ -535,7 +535,7 @@ body {
     <div style="width:100%; text-align:center;">
         <br><br><br>
         <div id="slideshow-container">
-         <img class="slide active" src="https://github.com/HuntersNetPlus/PvZ/blob/main/PVZ4-ezgif.com-video-to-apng-converter.png?raw=true">
+         <img class="slide active" src="https://github.com/HuntersNetPlus/PvZ/blob/main/PVZ5-ezgif.com-video-to-apng-converter.png?raw=true">
             <img class="slide" src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Purse.webp?raw=true">
             <img class="slide" src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Shopping%20Cart.webp?raw=true">
         </div>
@@ -1254,46 +1254,79 @@ function generateOrderId() {
 function openScreen(id) {
     Object.values(screens).forEach(s => s.classList.remove('active'));
     
-    // Устанавливаем текст для лоадера
     const loaderText = document.getElementById('loader-text');
-
-    if (id === 'choose') {
-        loaderText.textContent = 'Загрузка витрины...';
+    let loadingTime = 1500;
+    let phrases = [];
+    let phraseIndex = 0;
+    let phraseInterval = null;
+    
+    // Настройки для каждого экрана
+    if (id === 'welcome') {
+        loaderText.textContent = 'Загрузка...';
+        loadingTime = 1000;
+        
+    } else if (id === 'choose') {
+        // Экран витрины - 2.5 секунды
+        phrases = [
+            'Загрузка витрины...',
+            'Подготовка позиций...',
+            'Обновление товаров...',
+            'Почти готово...'
+        ];
+        loaderText.textContent = phrases[0];
+        loadingTime = 2500;
+        
+        // Меняем фразы каждые 625мс (2500 / 4 фразы)
+        phraseInterval = setInterval(() => {
+            phraseIndex++;
+            if (phraseIndex < phrases.length) {
+                // Перезапускаем анимацию для плавной смены
+                loaderText.style.animation = 'none';
+                setTimeout(() => {
+                    loaderText.style.animation = '';
+                    loaderText.textContent = phrases[phraseIndex];
+                }, 10);
+            }
+        }, 625);
+        
     } else if (id === 'payment') {
-        loaderText.textContent = 'Оформление заказа...';
-    } else {
-        loaderText.textContent = 'Обновление...';
+        // Экран оплаты - 5 секунд
+        phrases = [
+            'Оформление заказа...',
+            'Бронь позиции...',
+            'Поиск реквизитов...',
+            'Проверка статуса...'
+        ];
+        loaderText.textContent = phrases[0];
+        loadingTime = 5000;
+        
+        // Меняем фразы каждые 1250мс (5000 / 4 фразы)
+        phraseInterval = setInterval(() => {
+            phraseIndex++;
+            if (phraseIndex < phrases.length) {
+                // Перезапускаем анимацию для плавной смены
+                loaderText.style.animation = 'none';
+                setTimeout(() => {
+                    loaderText.style.animation = '';
+                    loaderText.textContent = phrases[phraseIndex];
+                }, 10);
+            }
+        }, 1250);
     }
     
     loader.style.display = 'flex';
     
     setTimeout(() => {
+        if (phraseInterval) {
+            clearInterval(phraseInterval);
+        }
+        
         loader.style.display = 'none';
         screens[id].classList.add('active');
         
         updateLocationTexts();
         updateProductTexts();
-    }, 2500); // Увеличил с 900 до 1500мс (1.5 секунды)
-}
-
-    function selectOption(name, price) {
-    const discount = price * 0.5;
-    
-    selected = { 
-        name, 
-        price,
-        discount
-    };
-    
-    document.getElementById('pay_title').innerText = name;
-    document.getElementById('price_usdt').innerText = price;
-        generateOrderId(); // ДОБАВЬ ЭТУ СТРОКУ
-    openScreen('payment');
-    
-    setTimeout(() => {
-        updateConversion();
-        updateProductTexts(); // ДОБАВЬ ЭТУ СТРОКУ
-    }, 250);
+    }, loadingTime);
 }
 
     
