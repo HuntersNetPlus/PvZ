@@ -1248,7 +1248,33 @@ function generateOrderId() {
         SBP: 'https://t.me/PVZ_BOSS?text=Здравствуйте!%20Хочу%20оплатить%20заказ.%20Нужны%20реквизиты%20для%20оплаты.'
     };
 
- 
+
+
+
+// Функция выбора товара (ДОБАВЬ ПЕРЕД openScreen)
+function selectOption(name, price) {
+    const discount = price * 0.5;
+    
+    selected = { 
+        name, 
+        price,
+        discount
+    };
+    
+    document.getElementById('pay_title').innerText = name;
+    document.getElementById('price_usdt').innerText = price;
+    generateOrderId();
+    openScreen('payment');
+    
+    setTimeout(() => {
+        updateConversion();
+        updateProductTexts();
+    }, 250);
+}
+
+
+
+    
       
 
 function openScreen(id) {
@@ -1863,7 +1889,10 @@ document.getElementById('welcomeBtn').addEventListener('click', () => {
     }
 });
 
-    
+    // Выбор опции
+    document.querySelectorAll('#choose .option').forEach(opt => {
+        opt.addEventListener('click', () => selectOption(opt.dataset.name, parseFloat(opt.dataset.price)));
+    });
 
     // Смена валюты
     document.getElementById('currency').addEventListener('change', updateConversion);
@@ -2375,84 +2404,58 @@ summary.innerText ="Данные заказа: " + selected.name;
 <script>
 window.addEventListener('load', function() {
     const feed = document.getElementById("card-feed");
-    if (!feed) return;
+    if (!feed) {
+        console.error('Feed не найден!');
+        return;
+    }
     
-    const SCROLL_SPEED = 0.6;
+    const SCROLL_SPEED = 65; // Регулируй от 0.3 до 1.0
     
+    console.log('🎯 Инициализация скролла...');
+    
+    // ===== ДЛЯ МЫШИ =====
     feed.addEventListener('wheel', function(e) {
         e.preventDefault();
         feed.scrollTop += e.deltaY * SCROLL_SPEED;
+        console.log('🖱️ Wheel:', e.deltaY);
     }, { passive: false });
     
-    let isPointerDown = false;
-    let lastPointerY = 0;
-    let startPointerY = 0;
-    let startTime = 0;
-    let pointerId = null;
-    let hasMoved = false;
-    let clickTarget = null;
+    // ===== ДЛЯ TOUCH =====
+    let touchStartY = 0;
+    let touchLastY = 0;
+    let scrollStart = 0;
+    let isTouch = false;
     
-    feed.addEventListener('pointerdown', function(e) {
-        isPointerDown = true;
-        pointerId = e.pointerId;
-        lastPointerY = e.clientY;
-        startPointerY = e.clientY;
-        startTime = Date.now();
-        hasMoved = false;
-        clickTarget = e.target;
-        feed.setPointerCapture(e.pointerId);
-    });
+    feed.addEventListener('touchstart', function(e) {
+        isTouch = true;
+        touchStartY = e.touches[0].clientY;
+        touchLastY = touchStartY;
+        scrollStart = feed.scrollTop;
+        console.log('👆 Touch START:', touchStartY);
+    }, { passive: false });
     
-    feed.addEventListener('pointermove', function(e) {
-        if (!isPointerDown || e.pointerId !== pointerId) return;
+    feed.addEventListener('touchmove', function(e) {
+        if (!isTouch) return;
         
-        const currentY = e.clientY;
-        const delta = lastPointerY - currentY;
+        e.preventDefault(); // Блокируем нативный скролл
         
-        if (Math.abs(startPointerY - currentY) > 8) {
-            hasMoved = true;
-        }
+        const touchY = e.touches[0].clientY;
+        const delta = touchLastY - touchY;
         
+        // Скроллим СРАЗУ
         feed.scrollTop += delta * SCROLL_SPEED;
-        lastPointerY = currentY;
-    });
-    
-    feed.addEventListener('pointerup', function(e) {
-        if (e.pointerId !== pointerId) return;
         
-        const duration = Date.now() - startTime;
-        const distance = Math.abs(startPointerY - e.clientY);
+        touchLastY = touchY;
         
-        // Клик если: быстрый тап (<250мс, <10px) ИЛИ не двигали вообще
-        if ((duration < 250 && distance < 10) || !hasMoved) {
-            const option = clickTarget.closest('.option');
-            if (option) {
-                console.log('🎯 КЛИК по:', option.dataset.name);
-                
-                // Получаем функцию selectOption из глобального scope
-                if (typeof selectOption === 'function') {
-                    const name = option.dataset.name;
-                    const price = parseFloat(option.dataset.price);
-                    
-                    if (name && !isNaN(price)) {
-                        selectOption(name, price);
-                    }
-                } else {
-                    console.error('❌ selectOption не найдена!');
-                }
-            }
-        }
-        
-        isPointerDown = false;
-        feed.releasePointerCapture(e.pointerId);
-    });
+        console.log('👆 Touch MOVE:', delta, 'ScrollTop:', feed.scrollTop);
+    }, { passive: false }); // ВАЖНО: passive: false!
     
-    feed.addEventListener('pointercancel', function(e) {
-        if (e.pointerId !== pointerId) return;
-        isPointerDown = false;
-    });
+    feed.addEventListener('touchend', function(e) {
+        console.log('👆 Touch END');
+        isTouch = false;
+    }, { passive: false });
     
-    console.log('✅ Скролл + клики активны');
+    console.log('✅ Скролл подключён! Скорость:', SCROLL_SPEED);
 });
 </script>
     
