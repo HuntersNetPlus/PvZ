@@ -2392,24 +2392,24 @@ summary.innerText ="Данные заказа: " + selected.name;
 //ТАЙМЕР 
     
 
-let remainingSeconds = 30 * 60; // 30 минут
-const timerElement = document.getElementById('timer');
+document.addEventListener('DOMContentLoaded', function() {
+    let remainingSeconds = 30 * 60;
+    const timerElement = document.getElementById('timer');
 
-function updateTimer() {
-    const minutes = Math.floor(remainingSeconds / 60);
-    const seconds = remainingSeconds % 60;
-    timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    function updateTimer() {
+        const minutes = Math.floor(remainingSeconds / 60);
+        const seconds = remainingSeconds % 60;
+        timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
-    if (remainingSeconds > 0) {
-        remainingSeconds--;
-    } else {
-        clearInterval(timerInterval);
+        if (remainingSeconds > 0) {
+            remainingSeconds--;
+        } else {
+            clearInterval(timerInterval);
+        }
     }
-}
 
-// Запуск таймера
-const timerInterval = setInterval(updateTimer, 1000);
-
+    const timerInterval = setInterval(updateTimer, 1000);
+});
 
 
 
