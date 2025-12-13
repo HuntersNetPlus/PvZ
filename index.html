@@ -1975,7 +1975,7 @@ document.addEventListener('click', () => {
             showGlassToast(`
                 <div style="text-align:center;">
                     <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Activity/Party%20Popper.webp?raw=true" style="width:70px;"><br>
-                    <div><b>Промокод ${code} успешно принят!</b><br><br> После оплаты заказа на баланс будет зачислено <br> <div style="color: #89ED5E";><b>${discount} USD!</b></div> <br><br> <b>Этот промокод действует 24 часа!</b></div>
+                    <div><b>Промокод ${code} успешно принят!</b><br><br> После оплаты заказа на баланс будет зачислен бонус в размере:<br> <br> <div style="color: #89ED5E";><b>${discount} USD!</b></div> <br> <b>Этот промокод действует 24 часа!</b></div>
                 </div>
             `);
 
@@ -2389,22 +2389,32 @@ summary.innerText ="Данные заказа: " + selected.name;
 
 
 
-const endTime = Date.now() + 30 * 60 * 1000;
+//ТАЙМЕР 
+    
+
+const DURATION = 30 * 60 * 1000; // 30 минут в мс
+const endTime = Date.now() + DURATION; // ОДИН РАЗ
+
 const timerEl = document.getElementById('timer');
 
 const timer = setInterval(() => {
-  const diff = Math.max(0, endTime - Date.now());
-  const totalSeconds = Math.floor(diff / 1000);
+  const diff = endTime - Date.now();
 
+  if (diff <= 0) {
+    clearInterval(timer);
+    timerEl.textContent = '00:00';
+    return;
+  }
+
+  const totalSeconds = Math.floor(diff / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
 
   timerEl.textContent =
     String(minutes).padStart(2, '0') + ':' +
     String(seconds).padStart(2, '0');
-
-  if (totalSeconds <= 0) clearInterval(timer);
 }, 1000);
+
 
 
 
