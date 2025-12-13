@@ -1965,7 +1965,7 @@ document.addEventListener('click', () => {
         }
 
         if (VALID_PROMOS.includes(code)) {
-            const discount = selected.discount*0.2;
+            const discount = (selected.discount * 0.2).toFixed(2);
             
             promoLabel.innerHTML = '<img src="https://github.com/HuntersNetPlus/MaxSwap/blob/main/CupAnimation.webp?raw=true" style="width:20px;vertical-align:middle;"> <b> Промокод успешно активирован!</b>';
             promoLabel.classList.add("gold-glow");
