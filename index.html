@@ -26,6 +26,39 @@ body {
 
 
 
+.marquee-container {
+    width: 100%;
+    background: white;
+    padding: 15px 0;
+    overflow: hidden;
+}
+
+.marquee-content {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+    animation: scroll 30s linear infinite;
+    white-space: nowrap;
+}
+
+.marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.marquee-item img {
+    height: 30px;
+}
+
+@keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+    
+
+
+
 #card-feed {
     overflow-y: scroll;
     touch-action: none; /* ВАЖНО! */
@@ -580,6 +613,43 @@ body {
 
 <!-- SCREEN 2 -->
 <div id="choose" class="screen">
+
+<!-- СТРОКА -->
+
+
+<div class="marquee-container">
+    <div class="marquee-content">
+        <div class="marquee-item">
+            <img src="icon1.png" alt="">
+            <span>Ваш текст 1</span>
+        </div>
+        <div class="marquee-item">
+            <img src="icon2.png" alt="">
+            <span>Ваш текст 2</span>
+        </div>
+        <div class="marquee-item">
+            <img src="icon3.png" alt="">
+            <span>Ваш текст 3</span>
+        </div>
+        
+        <!-- Дубликат для бесшовной прокрутки -->
+        <div class="marquee-item">
+            <img src="icon1.png" alt="">
+            <span>Ваш текст 1</span>
+        </div>
+        <div class="marquee-item">
+            <img src="icon2.png" alt="">
+            <span>Ваш текст 2</span>
+        </div>
+        <div class="marquee-item">
+            <img src="icon3.png" alt="">
+            <span>Ваш текст 3</span>
+        </div>
+    </div>
+</div>
+
+
+    
     <img src="https://github.com/HuntersNetPlus/PvZ/blob/main/Gemini_Generated_Image_qobu9jqobu9jqobu%20(1).webp?raw=true" style="width:200px; display:block; margin:0 auto;">
     
     <div style="text-align:center; color:white; font-weight:bold;">
