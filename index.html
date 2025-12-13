@@ -2392,7 +2392,7 @@ summary.innerText ="Данные заказа: " + selected.name;
 //ТАЙМЕР 
     
 
-document.addEventListener('DOMContentLoaded', function() {
+javascriptdocument.addEventListener('DOMContentLoaded', function() {
     let remainingSeconds = 30 * 60;
     const timerElement = document.getElementById('timer');
 
@@ -2408,9 +2408,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Первое обновление сразу
+    updateTimer();
+    
+    // Запуск таймера
     const timerInterval = setInterval(updateTimer, 1000);
 });
-
 
 
 
