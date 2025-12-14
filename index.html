@@ -54,10 +54,7 @@ body {
     height: 30px;
 }
 
-@keyframes scroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-}
+ 
     
 
 
@@ -2462,6 +2459,40 @@ summary.innerText ="Данные заказа: " + selected.name;
 
 
 
+
+
+
+
+
+
+
+
+
+
+const marquee = document.getElementById('marquee');
+const content = marquee.innerHTML;
+marquee.innerHTML = content + content + content;
+
+let pos = 0;
+const speed = 1; // пиксели за кадр (увеличьте для ускорения)
+
+function animate() {
+    pos -= speed;
+    const width = marquee.scrollWidth / 3;
+    
+    if (Math.abs(pos) >= width) {
+        pos = 0;
+    }
+    
+    marquee.style.transform = `translateX(${pos}px)`;
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+
+
+    
  
 
     
