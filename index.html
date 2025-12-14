@@ -47,6 +47,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 15px;
+    flex-shrink: 0;
 }
 
 .marquee-item img {
@@ -54,8 +55,8 @@ body {
 }
 
 @keyframes scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-33.33%); }
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
 }
     
 
