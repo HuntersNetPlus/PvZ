@@ -621,7 +621,7 @@ body {
     <div class="marquee-content" id="marquee">
         <div class="marquee-item">
             <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Money%20With%20Wings.webp?raw=true" alt="">
-            <span> Нужны деньги? Пиши оператору, у нас есть для тебя предложение!</span>
+            <span>Нужны деньги? Пиши оператору, у нас есть для тебя предложение!</span>
         </div>
         <div class="marquee-item">
             <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Money%20Bag.webp?raw=true" alt="">
@@ -634,15 +634,15 @@ body {
         
         <!-- Дубликат для бесшовной прокрутки -->
         <div class="marquee-item">
-            <img src="icon1.png" alt="">
-            <span>Нужна работа? Пиши оператору, у нас платят как надо!</span>
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Money%20With%20Wings.webp?raw=true" alt="">
+            <span>Нужны деньги? Пиши оператору, у нас есть для тебя предложение!</span>
         </div>
         <div class="marquee-item">
-            <img src="icon2.png" alt="">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Money%20Bag.webp?raw=true" alt="">
             <span>Приглашай друзей и получай до 80% от суммы их покупок!</span>
         </div>
         <div class="marquee-item">
-            <img src="icon3.png" alt="">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Printer.webp?raw=true" alt="">
             <span>Нужен рецептурный бланк? Пиши оператору - сделаем!</span>
         </div>
     </div>
@@ -2578,13 +2578,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </script>
 
+    
+
     <script>
+        //Бегущая строка
 const marquee = document.getElementById('marquee');
 const content = marquee.innerHTML;
 marquee.innerHTML = content + content + content;
 
 let pos = 0;
-const speed = 1; // пиксели за кадр (увеличьте для ускорения)
+const speed = 0.5; // пиксели за кадр (увеличьте для ускорения)
 
 function animate() {
     pos -= speed;
