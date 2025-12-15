@@ -136,10 +136,10 @@
     /* ===== КНОПКИ ===== */
     .dashboard-buttons {
       display: flex;
-      gap: 10px;
       flex-wrap: wrap;
-      margin-top: 20px;
+      gap: 10px;
       justify-content: center;
+      margin-top: 20px;
     }
 
     .dashboard-buttons button {
@@ -155,28 +155,53 @@
       position: relative;
     }
 
-    .tooltip {
-      visibility: hidden;
-      background-color: #ff6b6b;
-      color: #fff;
-      text-align: center;
-      border-radius: 4px;
-      padding: 4px 8px;
-      position: absolute;
-      z-index: 1;
-      bottom: 120%;
+    /* ===== ТУЛТИП ===== */
+    .tooltip-modal {
+      display: none;
+      position: fixed;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      font-size: 12px;
-      pointer-events: none;
-      white-space: nowrap;
+      transform: translate(-50%, -50%);
+      background: #1d2b3a;
+      border: 1px solid #6ab2f2;
+      border-radius: 10px;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      z-index: 1000;
+      max-width: 80%;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
     }
 
-    .dashboard-buttons button.show-tooltip .tooltip {
-      visibility: visible;
-      opacity: 1;
+    .tooltip-modal img {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 10px;
+    }
+
+    .tooltip-modal.show {
+      display: block;
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translate(-50%, -60%);}
+      to {opacity: 1; transform: translate(-50%, -50%);}
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 900;
+    }
+
+    .overlay.show {
+      display: block;
     }
   </style>
 </head>
@@ -268,18 +293,23 @@
 
   <!-- ===== КНОПКИ ===== -->
   <div class="dashboard-buttons">
-    <button onclick="accessCheck(true)">Страница 1</button>
-    <button onclick="accessCheck(false)">Страница 2
-      <span class="tooltip">У вас нет доступа к этой странице</span>
-    </button>
-    <button onclick="accessCheck(false)">Страница 3
-      <span class="tooltip">У вас нет доступа к этой странице</span>
-    </button>
-    <button onclick="accessCheck(false)">Страница 4
-      <span class="tooltip">У вас нет доступа к этой странице</span>
-    </button>
+    <button onclick="accessCheck(false)">Страница 1</button>
+    <button onclick="accessCheck(false)">Страница 2</button>
+    <button onclick="accessCheck(false)">Страница 3</button>
+    <button onclick="accessCheck(false)">Страница 4</button>
+    <button onclick="accessCheck(false)">Страница 5</button>
+    <button onclick="accessCheck(false)">Страница 6</button>
+    <button onclick="accessCheck(false)">Страница 7</button>
+    <button onclick="accessCheck(true)">Рабочая ссылка</button>
   </div>
 
+</div>
+
+<!-- ===== ТУЛТИП МОДАЛЬ ===== -->
+<div class="overlay" id="overlay"></div>
+<div class="tooltip-modal" id="tooltip">
+  <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Cross%20Mark.webp?raw=true" alt="">
+  <p>У вас нет доступа к этой странице</p>
 </div>
 
 <script>
@@ -293,18 +323,17 @@
       document.getElementById("login").style.display = "none";
       document.getElementById("dashboard").style.display = "block";
       startCounter();
-      updateTime();
+      setUpdateTime();
     } else {
       error.style.display = "block";
     }
   }
 
-  // ===== Текущее время =====
-  function updateTime() {
+  // ===== Время обновления фиксированное =====
+  function setUpdateTime() {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('ru-RU', {hour: '2-digit', minute:'2-digit', second:'2-digit'});
     document.getElementById('time').textContent = `Обновлено в ${timeStr}`;
-    setTimeout(updateTime, 1000);
   }
 
   // ===== Анимация чисел =====
@@ -313,7 +342,7 @@
     counters.forEach(counter => {
       const target = +counter.getAttribute('data-target');
       let count = 0;
-      const increment = target / 100; // 100 шагов
+      const increment = target / 100;
       const interval = setInterval(() => {
         count += increment;
         if (count >= target) {
@@ -322,18 +351,23 @@
         } else {
           counter.textContent = Math.floor(count).toLocaleString();
         }
-      }, 20); // каждые 20ms
+      }, 20);
     });
   }
 
   // ===== Кнопки =====
   function accessCheck(hasAccess) {
-    if (!hasAccess) {
-      const button = event.currentTarget;
-      button.classList.add('show-tooltip');
-      setTimeout(() => button.classList.remove('show-tooltip'), 2000);
+    if (hasAccess) {
+      window.open("https://example.com", "_blank");
     } else {
-      alert('Доступ разрешён!');
+      const tooltip = document.getElementById('tooltip');
+      const overlay = document.getElementById('overlay');
+      tooltip.classList.add('show');
+      overlay.classList.add('show');
+      setTimeout(() => {
+        tooltip.classList.remove('show');
+        overlay.classList.remove('show');
+      }, 2000);
     }
   }
 
