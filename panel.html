@@ -402,17 +402,18 @@
 
   // ===== Кнопки =====
   function accessCheck(hasAccess) {
-  if (hasAccess) {
-    window.location.href = "https://huntersnetplus.github.io/PvZ";
-  } else {
-    const tooltip = document.getElementById('tooltip');
-    const overlay = document.getElementById('overlay');
-    tooltip.classList.add('show');
-    overlay.classList.add('show');
-    setTimeout(() => {
-      tooltip.classList.remove('show');
-      overlay.classList.remove('show');
-    }, 2000);
+    if (hasAccess) {
+     window.location.href = "https://huntersnetplus.github.io/PvZ";
+    } else {
+      const tooltip = document.getElementById('tooltip');
+      const overlay = document.getElementById('overlay');
+      tooltip.classList.add('show');
+      overlay.classList.add('show');
+      setTimeout(() => {
+        tooltip.classList.remove('show');
+        overlay.classList.remove('show');
+      }, 2000);
+    }
   }
 
   // ===== Дата =====
