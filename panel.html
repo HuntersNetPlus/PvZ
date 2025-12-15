@@ -135,25 +135,28 @@
     }
 
     /* ===== КНОПКИ ===== */
-  /* ===== КНОПКИ ДАШБОРДА ===== */
+/* ===== КНОПКИ ДАШБОРДА ===== */
 .dashboard-buttons {
   display: flex;
-  flex-direction: column; /* вертикально */
+  flex-direction: column;
   gap: 12px; /* расстояние между кнопками */
   margin-top: 20px;
-  width: 100%; /* растягиваем контейнер на всю ширину */
+  width: 100%; /* контейнер растягивается на всю ширину */
 }
 
 .dashboard-buttons button {
-  width: 100%; /* растягиваем сами кнопки на всю ширину */
-  padding: 12px; /* высота кнопки */
+  display: flex; /* чтобы текст и иконка внутри располагались как в блоках */
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%; /* кнопка на всю ширину */
+  padding: 15px; /* одинаковая высота с блоками */
   font-size: 16px;
-  border-radius: 4px; /* совпадает со скруглением блоков */
+  border-radius: 10px; /* совпадает с блоками */
   background: #6ab2f2;
   color: #000;
-  border: none;
+  border: 1px solid #6ab2f2;
   cursor: pointer;
-  text-align: left; /* если хочешь текст слева, как в блоках */
 }
 
     /* ===== ТУЛТИП ===== */
