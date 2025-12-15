@@ -78,10 +78,34 @@
       display: none;
     }
 
+    
+
     .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+  text-align: left;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  flex: 1;
+}
+
+.header-right {
+  width: 60px;
+  height: 60px;
+  background: #1d2b3a;
+  border: 1px solid #6ab2f2;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+    
 
     .header h1 {
       margin: 0;
@@ -235,10 +259,13 @@
 <!-- ===== ДАШБОРД ===== -->
 <div class="app" id="dashboard">
 
-  <div class="header">
+ <div class="header">
+  <div class="header-left">
     <h1>Панель статистики<div class="date" id="date"></div></h1>
     <div class="time" id="time"></div>
   </div>
+  <div class="header-right"></div>
+</div>
 
   <!-- 8 БЛОКОВ -->
   <div class="block-style">
