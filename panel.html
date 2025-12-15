@@ -49,6 +49,7 @@
       background: #6ab2f2;
       color: #000;
       cursor: pointer;
+      position: relative;
     }
 
     .error {
@@ -83,6 +84,12 @@
       color: #9ca3af;
     }
 
+    .header .time {
+      font-size: 12px;
+      color: #a5b4fc;
+      margin-top: 2px;
+    }
+
     /* ===== ЕДИНЫЙ СТИЛЬ БЛОКОВ ===== */
     .block-style {
       background: #1d2b3a;
@@ -106,24 +113,70 @@
     }
 
     .icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
 
-.icon img {
-  width: 35px;
-  height: 35px;
-  object-fit: contain;
-}
+    .icon img {
+      width: 35px;
+      height: 35px;
+      object-fit: contain;
+    }
 
     .value {
       font-weight: bold;
       font-size: 18px;
+    }
+
+    /* ===== КНОПКИ ===== */
+    .dashboard-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    .dashboard-buttons button {
+      flex: 1 1 40%;
+      max-width: 150px;
+      background: #6ab2f2;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tooltip {
+      visibility: hidden;
+      background-color: #ff6b6b;
+      color: #fff;
+      text-align: center;
+      border-radius: 4px;
+      padding: 4px 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 120%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 12px;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .dashboard-buttons button.show-tooltip .tooltip {
+      visibility: visible;
+      opacity: 1;
     }
   </style>
 </head>
@@ -145,15 +198,16 @@
   <div class="header">
     <h1>Статистика продаж</h1>
     <div class="date" id="date"></div>
+    <div class="time" id="time"></div>
   </div>
 
   <!-- 8 БЛОКОВ -->
   <div class="block-style">
     <div class="block-left">
       <div class="icon"> <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Animals%20and%20Nature/Bat.webp?raw=true" alt=""></div>
-      <div>Клады</div>
+      <div>Продажи</div>
     </div>
-    <div class="value">76</div>
+    <div class="value" data-target="76">0</div>
   </div>
 
   <div class="block-style">
@@ -161,7 +215,7 @@
       <div class="icon"></div>
       <div>Продажи за месяц</div>
     </div>
-    <div class="value">320 800 ₽</div>
+    <div class="value" data-target="320800">0</div>
   </div>
 
   <div class="block-style">
@@ -169,7 +223,7 @@
       <div class="icon"></div>
       <div>Заказы сегодня</div>
     </div>
-    <div class="value">18</div>
+    <div class="value" data-target="18">0</div>
   </div>
 
   <div class="block-style">
@@ -177,7 +231,7 @@
       <div class="icon"></div>
       <div>Всего заказов</div>
     </div>
-    <div class="value">128</div>
+    <div class="value" data-target="128">0</div>
   </div>
 
   <div class="block-style">
@@ -185,7 +239,7 @@
       <div class="icon"></div>
       <div>Новые клиенты</div>
     </div>
-    <div class="value">7</div>
+    <div class="value" data-target="7">0</div>
   </div>
 
   <div class="block-style">
@@ -193,7 +247,7 @@
       <div class="icon"></div>
       <div>Всего клиентов</div>
     </div>
-    <div class="value">57</div>
+    <div class="value" data-target="57">0</div>
   </div>
 
   <div class="block-style">
@@ -201,7 +255,7 @@
       <div class="icon"></div>
       <div>Возвраты</div>
     </div>
-    <div class="value">2</div>
+    <div class="value" data-target="2">0</div>
   </div>
 
   <div class="block-style">
@@ -209,7 +263,21 @@
       <div class="icon"></div>
       <div>Средний чек</div>
     </div>
-    <div class="value">1 240 ₽</div>
+    <div class="value" data-target="1240">0</div>
+  </div>
+
+  <!-- ===== КНОПКИ ===== -->
+  <div class="dashboard-buttons">
+    <button onclick="accessCheck(true)">Страница 1</button>
+    <button onclick="accessCheck(false)">Страница 2
+      <span class="tooltip">У вас нет доступа к этой странице</span>
+    </button>
+    <button onclick="accessCheck(false)">Страница 3
+      <span class="tooltip">У вас нет доступа к этой странице</span>
+    </button>
+    <button onclick="accessCheck(false)">Страница 4
+      <span class="tooltip">У вас нет доступа к этой странице</span>
+    </button>
   </div>
 
 </div>
@@ -224,12 +292,52 @@
     if (input === PASSWORD) {
       document.getElementById("login").style.display = "none";
       document.getElementById("dashboard").style.display = "block";
+      startCounter();
+      updateTime();
     } else {
       error.style.display = "block";
     }
   }
 
-  // сегодняшняя дата
+  // ===== Текущее время =====
+  function updateTime() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('ru-RU', {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+    document.getElementById('time').textContent = `Обновлено в ${timeStr}`;
+    setTimeout(updateTime, 1000);
+  }
+
+  // ===== Анимация чисел =====
+  function startCounter() {
+    const counters = document.querySelectorAll('.value');
+    counters.forEach(counter => {
+      const target = +counter.getAttribute('data-target');
+      let count = 0;
+      const increment = target / 100; // 100 шагов
+      const interval = setInterval(() => {
+        count += increment;
+        if (count >= target) {
+          counter.textContent = target.toLocaleString();
+          clearInterval(interval);
+        } else {
+          counter.textContent = Math.floor(count).toLocaleString();
+        }
+      }, 20); // каждые 20ms
+    });
+  }
+
+  // ===== Кнопки =====
+  function accessCheck(hasAccess) {
+    if (!hasAccess) {
+      const button = event.currentTarget;
+      button.classList.add('show-tooltip');
+      setTimeout(() => button.classList.remove('show-tooltip'), 2000);
+    } else {
+      alert('Доступ разрешён!');
+    }
+  }
+
+  // ===== Дата =====
   const date = new Date().toLocaleDateString("ru-RU", {
     day: "numeric",
     month: "long",
