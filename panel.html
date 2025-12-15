@@ -37,7 +37,7 @@
     }
 
     input, button {
-      width: 90%;
+      width: 100%;
       padding: 5px;
       margin-top: 10px;
       border-radius: 4px;
@@ -65,7 +65,7 @@
       min-height: 100vh;
       margin: 0 auto;
       padding: 16px;
-      display: none;
+      display: none 
     }
 
     .header {
@@ -76,17 +76,18 @@
     .header h1 {
       margin: 0;
       font-size: 20px;
+      color: #6ab2f2;
     }
 
     .header .date {
       margin-top: 6px;
       font-size: 14px;
-      color: #9ca3af;
+      color: #6ab2f2;
     }
 
     .header .time {
       font-size: 12px;
-      color: #a5b4fc;
+      color: #6ab2f2;
       margin-top: 2px;
     }
 
@@ -221,8 +222,7 @@
 <div class="app" id="dashboard">
 
   <div class="header">
-    <h1>Статистика продаж</h1>
-    <div class="date" id="date"></div>
+    <h1>Статистика продаж за <div class="date" id="date"></div></h1>
     <div class="time" id="time"></div>
   </div>
 
@@ -333,7 +333,7 @@
   function setUpdateTime() {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('ru-RU', {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-    document.getElementById('time').textContent = `Обновлено в ${timeStr}`;
+    document.getElementById('time').textContent = `Последнее обновление в ${timeStr}`;
   }
 
   // ===== Анимация чисел =====
