@@ -22,27 +22,33 @@
       padding: 16px;
     }
 
-   /* ===== ЛОГИН ===== */
-.login-box input,
-.login-box button {
-  width: 100%;
-  margin: 10px 0;
-  border-radius: 6px;
-  border: none;
-  font-size: 16px;
-  padding: 12px; /* увеличиваем высоту поля и кнопки */
-}
-
-    .login-box h2 {
-      margin: 0 0 10px;
+    .login-box {
+      width: 100%;
+      max-width: 390px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    input, button {
+    .login-box h2 {
+      margin: 0 0 20px;
+      text-align: center;
+    }
+
+    .login-box input,
+    .login-box button {
       width: 100%;
-      margin: 10px;
-      border-radius: 4px;
+      max-width: 300px;
+      margin: 10px 0;
+      border-radius: 6px;
       border: none;
       font-size: 16px;
+      padding: 12px;
+    }
+
+    .login-box input {
+      background: white;
+      color: #000;
     }
 
     button {
@@ -57,6 +63,7 @@
       color: #ff6b6b;
       display: none;
       font-size: 14px;
+      text-align: center;
     }
 
     /* ===== ПРИЛОЖЕНИЕ ===== */
@@ -65,7 +72,7 @@
       min-height: 100vh;
       margin: 0 auto;
       padding: 16px;
-      display: none 
+      display: none;
     }
 
     .header {
@@ -134,30 +141,31 @@
       font-size: 18px;
     }
 
-    /* ===== КНОПКИ ===== */
-/* ===== КНОПКИ ДАШБОРДА ===== */
-.dashboard-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 12px; /* расстояние между кнопками */
-  margin-top: 20px;
-  width: 100%; /* контейнер растягивается на всю ширину */
-}
+    /* ===== КНОПКИ ДАШБОРДА ===== */
+    .dashboard-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+      width: 100%;
+    }
 
-.dashboard-buttons button {
-  display: flex; /* чтобы текст и иконка внутри располагались как в блоках */
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%; /* кнопка на всю ширину */
-  padding: 15px; /* одинаковая высота с блоками */
-  font-size: 16px;
-  border-radius: 10px; /* совпадает с блоками */
-  background: #6ab2f2;
-  color: #000;
-  border: 1px solid #6ab2f2;
-  cursor: pointer;
-}
+    .dashboard-buttons button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 300px;
+      padding: 15px;
+      font-size: 16px;
+      border-radius: 10px;
+      background: #6ab2f2;
+      color: #000;
+      border: 1px solid #6ab2f2;
+      cursor: pointer;
+    }
 
     /* ===== ТУЛТИП ===== */
     .tooltip-modal {
