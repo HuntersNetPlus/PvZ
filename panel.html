@@ -22,15 +22,16 @@
       padding: 16px;
     }
 
-    .login-box {
-      width: 100%;
-      max-width: 320px;
-      background: #1d2b3a;
-      padding: 20px;
-      border-radius: 10px;
-      border: 1px solid #6ab2f2;
-      text-align: center;
-    }
+   /* ===== ЛОГИН ===== */
+.login-box input,
+.login-box button {
+  width: 100%;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+  padding: 12px; /* увеличиваем высоту поля и кнопки */
+}
 
     .login-box h2 {
       margin: 0 0 10px;
@@ -134,24 +135,20 @@
     }
 
     /* ===== КНОПКИ ===== */
-    .dashboard-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 20px;
-    }
+   /* ===== КНОПКИ ДАШБОРДА ===== */
+.dashboard-buttons {
+  display: flex;
+  flex-direction: column; /* вертикально */
+  gap: 12px; /* расстояние между кнопками */
+  margin-top: 20px;
+  width: 100%;
+}
 
-    .dashboard-buttons button {
-      background: #6ab2f2;
-      color: #000;
-      border: none;
-      border-radius: 6px;
-      padding: 10px;
-      font-size: 15px;
-      cursor: pointer;
-      position: relative;
-    }
+.dashboard-buttons button {
+  width: 100%; /* теперь кнопки растягиваются на всю ширину контейнера */
+  padding: 12px; /* делаем кнопки выше, чтобы визуально совпадали с блоками */
+  font-size: 16px;
+}
 
     /* ===== ТУЛТИП ===== */
     .tooltip-modal {
