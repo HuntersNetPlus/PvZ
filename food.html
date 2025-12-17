@@ -350,6 +350,38 @@ body {
     opacity: 1;
 }
 
+.glass-tooltip {
+    position: fixed;
+    left: 50%;
+    width: 65vw;
+    max-width: 400px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 8px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(29, 43, 58, 0.95);
+    border: 1px solid rgba(106, 178, 242, 0.3);
+    color: white;
+    font-size: 15px;
+    animation: fadeInScale 0.3s ease;
+    z-index: 99999;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes fadeInScale {
+    from { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.9); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1); 
+    }
+}
+
 .slideshow-container {
     position: relative;
     width: 80vw;
@@ -627,9 +659,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateProductTexts() {
-        document.querySelectorAll('.product-name').forEach(el => {
-            el.textContent = selected.name || '—';
-        });
+        // Оновлюємо назви в order-info
+        const productNameInOrder = document.querySelector('.order-info .product-name');
+        if (productNameInOrder) {
+            productNameInOrder.textContent = selected.name || '—';
+        }
         
         const totalPriceEl = document.getElementById('totalPrice');
         if (totalPriceEl) {
