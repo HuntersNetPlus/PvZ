@@ -63,6 +63,53 @@
       font-size: 15px;
       line-height: 1.4;
     }
+    .tooltip-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1d2b3a;
+  border: 1px solid #6ab2f2;
+  border-radius: 10px;
+  padding: 20px;
+  color: white;
+  text-align: center;
+  z-index: 1000;
+  max-width: 80%;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.tooltip-modal img {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 12px;
+}
+
+.tooltip-modal p {
+  margin-bottom: 15px;
+  font-size: 15px;
+}
+
+.tooltip-btn {
+  background: #6ab2f2;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.55);
+  z-index: 900;
+}
+
   </style>
 </head>
 <body>
@@ -138,5 +185,25 @@
  
 </div>
 
+
+<!-- ===== МОДАЛЬ ПРИ ЗАГРУЗКЕ ===== -->
+<div class="overlay show" id="startOverlay"></div>
+
+<div class="tooltip-modal show" id="startTooltip">
+  <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Information.webp?raw=true" alt="">
+  <p>Ознакомьтесь с разделом вопросов и ответов перед использованием сервиса.</p>
+  <button class="tooltip-btn" onclick="closeStartTooltip()">Ок</button>
+</div>
+
+
+  
 </body>
+<script>
+  function closeStartTooltip() {
+    document.getElementById('startTooltip').style.display = 'none';
+    document.getElementById('startOverlay').style.display = 'none';
+  }
+</script>
+
+  
 </html>
