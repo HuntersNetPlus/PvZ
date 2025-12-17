@@ -14,7 +14,9 @@
     }
 
     a {
-  color: red;
+  color: #6ab2f2;       /* цвет ссылки */
+  font-weight: bold;     /* жирный текст */
+  text-decoration: none; /* убираем подчёркивание */
 }
 
     .app {
@@ -46,6 +48,12 @@
       text-align: center;
       margin-bottom: 20px;
     }
+
+    .faq-header {
+  display: flex;           /* элементы в одну строку */
+  align-items: center;     /* вертикальное выравнивание по центру */
+  justify-content: flex-start; /* выравнивание по левому краю */
+}
 
     .faq-block img {
       width: 50px;
@@ -162,13 +170,20 @@
     </div>
   </div>
 
-  <div class="faq-block">
+
+  
+
+ <div class="faq-block">
+  <div class="faq-header">
     <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Currency%20Exchange.webp?raw=true">
     <div class="faq-title">Как можно оплатить?</div>
-    <div class="faq-content">
-      Мы принимаем оплату в криптовалюте и банковскими картами. Также доступны чеки и переводы через популярные криптосервисы и боты (CryptoBot, xRocket, Telegram Wallet) и аналогичные платежные решения. Уточнить подходящий способ оплаты можно у <a href="https://site.ru/page.html#contacts">оператора</a>.
-    </div>
   </div>
+  <div class="faq-content">
+    Мы принимаем оплату в криптовалюте и банковскими картами. Также доступны чеки и переводы через популярные криптосервисы и боты (CryptoBot, xRocket, Telegram Wallet) и аналогичные платежные решения. Уточнить подходящий способ оплаты можно у <a href="https://site.ru/page.html#contacts">оператора</a>.
+  </div>
+</div>
+
+  
 
   <div class="faq-block">
     <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Check%20Mark%20Button.webp?raw=true">
