@@ -8,7 +8,7 @@
 body { 
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #f5f5f5;
+    background: #17212b;
 }
 
 .screen {
@@ -28,21 +28,34 @@ body {
     left: 0;
     width: 100%; 
     height: 100%;
-    background: #fff;
+    background: #17212b;
     display: none;
     flex-direction: column;
-    color: #333;
+    color: white;
     justify-content: center;
     align-items: center;
     font-size: 22px;
     z-index: 9999;
 }
 
+#loader-text {
+    color: #6ab2f2;
+    font-size: 18px;
+    margin-top: 15px;
+    font-weight: bold;
+    animation: fadeInOut 0.5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
 .marquee-container {
     width: 100%;
-    background: rgba(255, 140, 0, 0.1);
-    padding: 10px 0;
-    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 5px 0;
+    border-radius: 6px;
     overflow: hidden;
     margin-bottom: 20px;
 }
@@ -50,23 +63,16 @@ body {
 .marquee-content {
     display: flex;
     align-items: center;
-    gap: 30px;
-    color: #ff8c00;
-    animation: scroll 25s linear infinite;
+    gap: 20px;
+    color: #6ab2f2;
     white-space: nowrap;
-}
-
-@keyframes scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
 }
 
 .marquee-item {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
     flex-shrink: 0;
-    font-weight: 500;
 }
 
 .button {
@@ -76,17 +82,17 @@ body {
     padding: 15px;
     font-size: 18px;
     text-align: center;
-    background: #ff8c00;
+    background: #2f6ea5;
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     display: block;
     cursor: pointer;
     transition: background 0.3s;
 }
 
 .button:hover:not(:disabled) {
-    background: #ff7700;
+    background: #265580;
 }
 
 .button:disabled {
@@ -105,19 +111,28 @@ body {
     width: 100%;
     padding: 12px;
     font-size: 14px;
-    border-radius: 8px;
+    border-radius: 6px;
     margin-bottom: 10px;
-    border: 2px solid #ff8c00;
-    background: #fff;
-    color: #333;
+    border: 1px solid #6ab2f2;
+    background: #17212b;
+    color: #6ab2f2;
     outline: none;
     cursor: pointer;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%236ab2f2" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
 }
 
 .location-select:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    background: #f0f0f0;
+    background: #1d2b3a;
+}
+
+.location-select option {
+    background: #17212b;
+    color: #6ab2f2;
 }
 
 .feed {
@@ -127,52 +142,52 @@ body {
 }
 
 .option {
-    background: #fff;
-    padding: 15px;
+    background: #253648;
+    padding: 12px;
     border-radius: 12px;
     margin-bottom: 15px;
     display: flex;
-    gap: 15px;
+    gap: 12px;
     align-items: center;
     cursor: pointer;
-    border: 2px solid #e0e0e0;
+    border: 1px solid #253648;
     transition: all 0.3s;
 }
 
 .option:hover {
-    border-color: #ff8c00;
+    border-color: #6ab2f2;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 140, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(106, 178, 242, 0.2);
 }
 
 .option img {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     border-radius: 8px;
     object-fit: cover;
 }
 
 .product-name {
-    color: #ff8c00;
+    color: #6ab2f2;
     font-weight: bold;
     font-size: 16px;
 }
 
 .product-price {
-    color: #333;
+    color: #ffd700;
     font-weight: bold;
     margin-top: 5px;
 }
 
 .desc {
     font-size: 13px;
-    margin-top: 5px;
-    color: #666;
+    margin-top: 4px;
+    color: white;
 }
 
 #payment {
     font-size: 15px;
-    color: #333;
+    color: white;
     max-width: 600px;
     margin: 0 auto;
 }
@@ -182,9 +197,9 @@ body {
 }
 
 .order-info {
-    background: #fff;
-    border: 2px solid #ff8c00;
-    border-radius: 12px;
+    background: #1d2b3a;
+    border: 1px solid #6ab2f2;
+    border-radius: 10px;
     padding: 20px;
     margin-bottom: 20px;
 }
@@ -193,39 +208,46 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 10px 0;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid rgba(106, 178, 242, 0.2);
+    color: white;
 }
 
 .order-row:last-child {
     border-bottom: none;
     font-weight: bold;
     font-size: 18px;
-    color: #ff8c00;
+    color: #6ab2f2;
 }
 
 .payment-methods {
-    background: #fff;
-    border-radius: 12px;
+    background: #1d2b3a;
+    border-radius: 10px;
     padding: 20px;
     margin-top: 20px;
 }
 
+.payment-methods h3 {
+    color: #6ab2f2;
+}
+
 .payment-method {
     padding: 15px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid #253648;
     border-radius: 8px;
     margin-bottom: 10px;
     cursor: pointer;
     transition: all 0.3s;
+    color: white;
+    background: #253648;
 }
 
 .payment-method:hover {
-    border-color: #ff8c00;
+    border-color: #6ab2f2;
 }
 
 .payment-method.selected {
-    border-color: #ff8c00;
-    background: #fff8f0;
+    border-color: #6ab2f2;
+    background: rgba(106, 178, 242, 0.1);
 }
 
 .confirm-btn {
@@ -269,20 +291,24 @@ body {
 
 .header-text {
     text-align: center;
-    color: #333;
+    color: white;
     margin: 20px 0;
 }
 
 .header-text h1 {
-    color: #ff8c00;
+    color: #6ab2f2;
     margin-bottom: 10px;
+}
+
+.header-text p {
+    color: white;
 }
 </style>
 </head>
 <body>
 
 <div id="loader">
-    <div style="font-size: 48px;">🍕</div>
+    <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Hourglass%20Not%20Done.webp?raw=true" style="width:200px;">
     <div id="loader-text">Завантаження...</div>
 </div>
 
@@ -299,7 +325,7 @@ body {
         <img class="slide" src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop" alt="Бургер">
     </div>
     
-    <div style="text-align:center; color:#333; padding: 0 20px;">
+    <div style="text-align:center; color:white; padding: 0 20px;">
         <p><b>Доставка за 30-40 хвилин</b></p>
         <p>Свіжа їжа від найкращих закладів вашого міста!</p>
     </div>
@@ -334,8 +360,8 @@ body {
     </div>
     
     <div style="text-align:center; margin-bottom: 20px;">
-        <h2 style="color: #ff8c00;">Меню</h2>
-        <p style="color: #666;"><span class="metro-text">—</span> (м. <span class="city-text">—</span>)</p>
+        <h2 style="color: #6ab2f2;">Меню</h2>
+        <p style="color: white;"><span class="metro-text">—</span> (м. <span class="city-text">—</span>)</p>
     </div>
 
     <div id="card-feed" class="feed">
@@ -415,10 +441,10 @@ body {
 
 <!-- ЕКРАН 3: Оформлення замовлення -->
 <div id="payment" class="screen">
-    <h2 style="text-align: center; color: #ff8c00;">Оформлення замовлення</h2>
+    <h2 style="text-align: center; color: #6ab2f2;">Оформлення замовлення</h2>
     
     <div class="order-info">
-        <h3 style="color: #333; margin-top: 0;">Деталі замовлення #<span id="orderId">12345</span></h3>
+        <h3 style="color: #6ab2f2; margin-top: 0;">Деталі замовлення #<span id="orderId">12345</span></h3>
         
         <div class="order-row">
             <span>Місто:</span>
@@ -631,6 +657,27 @@ document.addEventListener('DOMContentLoaded', () => {
             location.reload();
         }, 2000);
     });
+
+    const marquee = document.getElementById('marquee');
+    const marqueContent = marquee.innerHTML;
+    marquee.innerHTML = marqueContent + marqueContent + marqueContent;
+
+    let pos = 0;
+    const speed = 0.5;
+
+    function animateMarquee() {
+        pos -= speed;
+        const width = marquee.scrollWidth / 3;
+        
+        if (Math.abs(pos) >= width) {
+            pos = 0;
+        }
+        
+        marquee.style.transform = `translateX(${pos}px)`;
+        requestAnimationFrame(animateMarquee);
+    }
+
+    animateMarquee();
 
     // Слайдшоу
     const slides = document.querySelectorAll('.slide');
