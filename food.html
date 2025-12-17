@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FoodExpress - Доставка їжі</title>
+<style>  
+body { 
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #17212b;
+}
+.screen {
+    display: none;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#price_usdt {
+    color: #17212b;
+    display: none;
+}
+
+.marquee-container {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 5px 0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.marquee-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: #6ab2f2;
+    animation: scroll 30s linear infinite;
+    white-space: nowrap;
+}
+
+.marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.marquee-item img {
+    height: 30px;
+}
+
+#card-feed {
+    overflow-y: scroll;
+    touch-action: none;
+    -webkit-overflow-scrolling: auto;
+    overscroll-behavior: none;
+    overflow: hidden;
+}
+
+.active { display: block; }
+
+#pay_title {
+  display: none;
+}
+
+#slideshow-container {
+    position: relative;
+    width: 80vw;
+    max-width: 400px;
+    height: 60vw;
+    max-height: 300px;
+    margin: 5px auto;
+}
+
+.gold-glow {
+    color: #ffdd77 !important;
+    text-shadow:
+        0 0 6px #ffdd77,
+        0 0 12px #ffbb22,
+        0 0 20px #ffaa00;
+    transition: 0.3s ease;
+}
+
+.tooltip-glass {
+    position: fixed;
+    left: 50%;
+    width: 65vw;
+    top: 40%;
+    transform: translateX(-50%);
+    padding: 10px 10px;
+    border-radius: 4px;
+    backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    font-size: 14px;
+    animation: fadeIn 0.25s ease;
+    z-index: 99999;
+    text-align: center;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -20px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    opacity: 0.9;
+    border-radius: 2px;
+}
+
+.glass-status-btn {
+    padding: 2px;
+    width: 63vw;
+    max-width: 63vw;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 4px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    position: relative;
+    overflow: hidden;
+}
+
+.glass-status-btn::after {
+    content: "";
+    position: absolute;
+    top: -150%;
+    left: -150%;
+    width: 300%;
+    height: 300%;
+    background: linear-gradient(
+        45deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.6) 25%,
+        rgba(255,255,255,0) 55%
+    );
+    transform: rotate(15deg);
+    animation: shine-move 3s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes shine-move {
+    from { transform: translateX(-100%) rotate(15deg); }
+    to   { transform: translateX(100%) rotate(15deg); }
+}
+
+.slide {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    transform-origin: center center;
+}
+
+.slide.active {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.slide.out {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.1);
+}
+
+.button {
+    width: 75vw;
+    margin: 20px auto 0;
+    padding: 15px;
+    font-size: 18px;
+    text-align: center;
+    background: #2f6ea5;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    display: block;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    color: #fff;
+}
+
+.feed {
+    height: 400px;
+    overflow-y: auto;
+    position: relative;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1) 10%, rgba(0,0,0,1) 90%, rgba(0,0,0,0));
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1) 10%, rgba(0,0,0,1) 90%, rgba(0,0,0,0));
+    mask-repeat: no-repeat;
+    mask-size: 100% 100%;
+}
+
+.feed-item {
+    background: #1d2b3a;
+    color: white;
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    border: 1px solid #6ab2f2;
+    font-size: 16px;
+}
+
+.tooltiptext {
+    visibility: hidden;
+    width: 250px;
+    padding: 10px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    text-align: center;
+    font-size: 14px;
+    position: fixed;
+    top: 55%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.7s, transform 0.7s;
+}
+
+.tooltip.show .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.qr-glow-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.option {
+    scroll-snap-align: start;
+    background: #253648;
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 15px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.option img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+}
+
+.desc {
+    font-size: 13px;
+    margin-top: 4px;
+    color: white;
+}
+
+#loader {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: #17212b;
+    display: none;
+    flex-direction: column;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+}
+
+#payment {
+    font-size: 15px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+
+#payment.active {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.address-box {
+    max-width: 65vw;
+    padding: 8px;
+    border: 2px dashed #6ab2f2;
+    border-radius: 4px;
+    word-wrap: break-word;
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.copied {
+    background: #6ab2f2;
+    border-color: #00aa00;
+    transition: 1s;
+}
+
+.location-selector {
+    width: 75vw;
+    max-width: 400px;
+    margin: 10px auto;
+    text-align: center;
+}
+
+.location-select {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    border: 1px solid #6ab2f2;
+    background: #17212b;
+    color: #6ab2f2;
+    outline: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%236ab2f2" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+}
+
+.location-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #1d2b3a;
+}
+
+.location-select option {
+    background: #17212b;
+    color: #6ab2f2;
+}
+
+.product-name {
+    color: #6ab2f2;
+    font-weight: bold;
+}
+
+#loader-text {
+    color: #6ab2f2;
+    font-size: 18px;
+    margin-top: 15px;
+    font-weight: bold;
+    animation: fadeInOut 0.5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+    
+.product-price {
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.order-id {
+    color: #6ab2f2;
+    font-weight: bold;
+}
+
+#promo_input::placeholder {
+    color: #6ab2f2;
+    text-transform: uppercase;
+    opacity: 1;
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+    <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Hourglass%20Not%20Done.webp?raw=true" style="width:200px;">
+    <div id="loader-text" style="color: #6ab2f2; font-size: 18px; margin-top: 15px; font-weight: bold;">Завантаження...</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div id="welcome" class="screen active" style="text-align:center;">
+    <div style="width:100%; text-align:center;">
+        <br><br><br>
+        <div id="slideshow-container">
+            <img class="slide active" src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Pizza.webp?raw=true">
+            <img class="slide" src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Bento%20Box.webp?raw=true">
+            <img class="slide" src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Hamburger.webp?raw=true">
+        </div>
+    </div>
+    
+    <div style="text-align:center; color:white">
+        <div style="color:#6ab2f2"><b>Смачна їжа з доставкою!</b></div><br>
+        FoodExpress - завжди свіжі страви та швидка доставка. <p><b>Замовляй онлайн цілодобово.</b></p>
+    </div>
+
+    <!-- БЛОК ВЫБОРА ГОРОДА И МЕТРО -->
+    <div class="location-selector">
+        <select id="citySelect" class="location-select">
+            <option value="">Оберіть місто</option>
+            <option value="kyiv">Київ</option>
+            <option value="kharkiv">Харків</option>
+            <option value="dnipro">Дніпро</option>
+        </select>
+
+        <select id="metroSelect" class="location-select" disabled>
+            <option value="">Спочатку оберіть місто</option>
+        </select>
+    </div>
+
+    <button class="button" id="welcomeBtn" disabled style="opacity: 0.5;">Перейти до меню</button>
+</div>
+
+<!-- SCREEN 2 -->
+<div id="choose" class="screen">
+
+<div class="marquee-container">
+    <div class="marquee-content" id="marquee">
+        <div class="marquee-item">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Hot%20Dog.webp?raw=true" alt="">
+            <span>Безкоштовна доставка при замовленні від 500 грн!</span>
+        </div>
+        <div class="marquee-item">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Activity/Party%20Popper.webp?raw=true" alt="">
+            <span>Запрошуй друзів та отримуй знижки до 20%!</span>
+        </div>
+        <div class="marquee-item">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Alarm%20Clock.webp?raw=true" alt="">
+            <span>Доставка протягом 30-60 хвилин!</span>
+        </div>
+        
+        <div class="marquee-item">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Hot%20Dog.webp?raw=true" alt="">
+            <span>Безкоштовна доставка при замовленні від 500 грн!</span>
+        </div>
+        <div class="marquee-item">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Activity/Party%20Popper.webp?raw=true" alt="">
+            <span>Запрошуй друзів та отримуй знижки до 20%!</span>
+        </div>
+        <div class="marquee-item">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Alarm%20Clock.webp?raw=true" alt="">
+            <span>Доставка протягом 30-60 хвилин!</span>
+        </div>
+    </div>
+</div>
+
+    <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Pot%20of%20Food.webp?raw=true" style="width:200px; display:block; margin:0 auto;">
+    
+    <div style="text-align:center; color:white; font-weight:bold;">
+        Меню для метро <span class="metro-text">—</span> (м. <span class="city-text">—</span>):
+    </div>
+    <div id="card-feed" class="feed">
+
+        <!-- ПІЦА -->
+        <div class="option" data-name="Піца Маргарита" data-price="180">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Pizza.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Піца Маргарита <br>180 грн</div>
+                <div class="desc">Класична італійська піца з томатами, моцарелою та базиліком. Тісто власного приготування.</div>
+            </div>
+        </div>
+
+        <div class="option" data-name="Піца Пепероні" data-price="220">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Pizza.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Піца Пепероні <br>220 грн</div>
+                <div class="desc">Гостра ковбаска пепероні, сир моцарела, томатний соус. Велика 30 см.</div>
+            </div>
+        </div>
+
+        <div class="option" data-name="Піца Чотири сири" data-price="250">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Pizza.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Піца Чотири сири <br>250 грн</div>
+                <div class="desc">Моцарела, пармезан, дор блю, чеддер. Для справжніх цінителів сиру!</div>
+            </div>
+        </div>
+
+        <!-- СУШІ -->
+        <div class="option" data-name="Філадельфія" data-price="280">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Bento%20Box.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Філадельфія <br>280 грн</div>
+                <div class="desc">Лосось, вершковий сир, огірок, авокадо. 8 шт. Свіжі інгредієнти щодня!</div>
+            </div>
+        </div>
+
+        <div class="option" data-name="Каліфорнія" data-price="260">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Bento%20Box.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Каліфорнія <br>260 грн</div>
+                <div class="desc">Краб, авокадо, огірок, ікра тобіко. 8 шт. Класика японської кухні.</div>
+            </div>
+        </div>
+
+        <div class="option" data-name="Сет Мікс" data-price="550">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Bento%20Box.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Сет Мікс <br>550 грн</div>
+                <div class="desc">Філадельфія, Каліфорнія, Дракон. 24 шт. Економ на великому замовленні!</div>
+            </div>
+        </div>
+
+        <!-- БУРГЕРИ -->
+        <div class="option" data-name="Класичний бургер" data-price="150">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Hamburger.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Класичний бургер <br>150 грн</div>
+                <div class="desc">Яловича котлета, сир чеддер, помідор, огірок, салат. Подається з картоплею фрі.</div>
+            </div>
+        </div>
+
+        <div class="option" data-name="Чізбургер Делюкс" data-price="180">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Hamburger.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Чізбургер Делюкс <br>180 грн</div>
+                <div class="desc">Подвійна котлета, подвійний сир, бекон, фірмовий соус. Для справжніх голодних!</div>
+            </div>
+        </div>
+
+        <div class="option" data-name="Вега-бургер" data-price="140">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Hamburger.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Вега-бургер <br>140 грн</div>
+                <div class="desc">Рослинна котлета, авокадо, руккола, томати. Смачно і корисно!</div>
+            </div>
+        </div>
+
+        <!-- ВОК -->
+        <div class="option" data-name="Вок з куркою" data-price="160">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Steaming%20Bowl.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Вок з куркою <br>160 грн</div>
+                <div class="desc">Локшина удон, курка, овочі, соєвий соус. Гаряче та ситно!</div>
+            </div>
+        </div>
+
+        <div class="option" data-name="Вок з морепродуктами" data-price="220">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Steaming%20Bowl.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Вок з морепродуктами <br>220 грн</div>
+                <div class="desc">Креветки, кальмари, мідії, овочі, локшина. Морський смак!</div>
+            </div>
+        </div>
+
+        <!-- САЛАТИ -->
+        <div class="option" data-name="Салат Цезар" data-price="120">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Green%20Salad.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Салат Цезар <br>120 грн</div>
+                <div class="desc">Курка, салат айсберг, помідори черрі, пармезан, соус цезар.</div>
+            </div>
+        </div>
+
+        <div class="option" data-name="Грецький салат" data-price="110">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Green%20Salad.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Грецький салат <br>110 грн</div>
+                <div class="desc">Томати, огірки, оливки, сир фета, оливкова олія. Середземноморський смак!</div>
+            </div>
+        </div>
+
+        <!-- ДЕСЕРТИ -->
+        <div class="option" data-name="Чізкейк" data-price="80">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Shortcake.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Чізкейк <br>80 грн</div>
+                <div class="desc">Ніжний сирний торт з ягідним соусом. Тане в роті!</div>
+            </div>
+        </div>
+
+        <div class="option" data-name="Тірамісу" data-price="90">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Shortcake.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Тірамісу <br>90 грн</div>
+                <div class="desc">Італійський десерт з маскарпоне та кавою. Класика жанру!</div>
+            </div>
+        </div>
+
+        <!-- НАПОЇ -->
+        <div class="option" data-name="Кока-Кола 0.5л" data-price="35">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Cup%20with%20Straw.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Кока-Кола 0.5л <br>35 грн</div>
+                <div class="desc">Холодна та освіжаюча. Ідеально до будь-якої страви!</div>
+            </div>
+        </div>
+
+        <div class="option" data-name="Сік апельсиновий 0.5л" data-price="40">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food/Cup%20with%20Straw.webp?raw=true" alt="">
+            <div>
+                <div style="color:#6ab2f2">Сік апельсиновий 0.5л <br>40 грн</div>
+                <div class="desc">Свіжовичавлений натуральний сік. Заряд вітамінів!</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- SCREEN 3 -->
+<div id="payment" class="screen">
+    <b id="pay_title">Оформлення замовлення</b>
+    
+    <div style="width:72%; border: 1px solid #6ab2f2; border-radius: 8px; margin-bottom:5px;">
+        <div style="color:#6ab2f2; width:80%; margin:0 auto; background: #17212b; text-align:center; margin-top: -10px; z-index: 2;">
+            Дані замовлення #<span class="order-id">—</span> <br> 
+            <div><span class="city-text">—</span>, <span class="metro-text">—</span><br><span class="product-name">—</span></div>
+        </div>
+        
+        <div style="color: #89ED5E; padding: 15px;">
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Locked%20With%20Key.webp?raw=true" style="width:20px; vertical-align:middle">
+            Замовлення заброньовано на <span id="timer">30:00</span>
+        </div>
+    </div>
+
+    <br>
+
+    <div style="color:#6ab2f2; margin-bottom:7px">
+        <b>Сума до оплати:</b> <b id="converted_amount" class="product-price">...</b>
+    </div>
+    
+    <div style="margin-bottom:7px">
+        <span class="tooltip">
+            <div class="glass-status-btn">
+                <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Magnifying%20Glass%20Tilted%20Right.webp?raw=true" style="width:20px; vertical-align:middle"> Статус: очікування оплати [?]
+            </div>
+            <span class="tooltiptext">
+                <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Money%20With%20Wings.webp?raw=true" style="width:
