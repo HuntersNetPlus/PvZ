@@ -307,6 +307,49 @@ body {
     color: rgba(106, 178, 242, 0.5);
 }
 
+.order-image {
+    width: 100%;
+    max-width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin: 15px auto;
+    display: block;
+    border: 2px solid #6ab2f2;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.tooltiptext {
+    visibility: hidden;
+    width: 250px;
+    padding: 10px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    text-align: center;
+    font-size: 14px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip.show .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
 .slideshow-container {
     position: relative;
     width: 80vw;
@@ -402,7 +445,7 @@ body {
     </div>
 
     <div id="card-feed" class="feed">
-        <div class="option" data-name="Піца Маргарита" data-price="189">
+        <div class="option" data-name="Піца Маргарита" data-price="189" data-img="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=200&h=200&fit=crop">
             <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=200&h=200&fit=crop" alt="Піца">
             <div>
                 <div class="product-name">Піца Маргарита</div>
@@ -411,7 +454,7 @@ body {
             </div>
         </div>
 
-        <div class="option" data-name="Піца Пепероні" data-price="219">
+        <div class="option" data-name="Піца Пепероні" data-price="219" data-img="https://images.unsplash.com/photo-1628840042765-356cda07504e?w=200&h=200&fit=crop">
             <img src="https://images.unsplash.com/photo-1628840042765-356cda07504e?w=200&h=200&fit=crop" alt="Піца">
             <div>
                 <div class="product-name">Піца Пепероні</div>
@@ -420,7 +463,7 @@ body {
             </div>
         </div>
 
-        <div class="option" data-name="Сет суші Філадельфія" data-price="349">
+        <div class="option" data-name="Сет суші Філадельфія" data-price="349" data-img="https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=200&h=200&fit=crop">
             <img src="https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=200&h=200&fit=crop" alt="Суші">
             <div>
                 <div class="product-name">Сет суші Філадельфія</div>
@@ -429,7 +472,7 @@ body {
             </div>
         </div>
 
-        <div class="option" data-name="Сет суші Каліфорнія" data-price="329">
+        <div class="option" data-name="Сет суші Каліфорнія" data-price="329" data-img="https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?w=200&h=200&fit=crop">
             <img src="https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?w=200&h=200&fit=crop" alt="Суші">
             <div>
                 <div class="product-name">Сет суші Каліфорнія</div>
@@ -438,7 +481,7 @@ body {
             </div>
         </div>
 
-        <div class="option" data-name="Бургер Класичний" data-price="149">
+        <div class="option" data-name="Бургер Класичний" data-price="149" data-img="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&h=200&fit=crop">
             <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&h=200&fit=crop" alt="Бургер">
             <div>
                 <div class="product-name">Бургер Класичний</div>
@@ -447,7 +490,7 @@ body {
             </div>
         </div>
 
-        <div class="option" data-name="Бургер Чікен" data-price="139">
+        <div class="option" data-name="Бургер Чікен" data-price="139" data-img="https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=200&h=200&fit=crop">
             <img src="https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=200&h=200&fit=crop" alt="Бургер">
             <div>
                 <div class="product-name">Бургер Чікен</div>
@@ -456,7 +499,7 @@ body {
             </div>
         </div>
 
-        <div class="option" data-name="WOK з куркою" data-price="159">
+        <div class="option" data-name="WOK з куркою" data-price="159" data-img="https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=200&h=200&fit=crop">
             <img src="https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=200&h=200&fit=crop" alt="WOK">
             <div>
                 <div class="product-name">WOK з куркою</div>
@@ -465,7 +508,7 @@ body {
             </div>
         </div>
 
-        <div class="option" data-name="Паста Карбонара" data-price="169">
+        <div class="option" data-name="Паста Карбонара" data-price="169" data-img="https://images.unsplash.com/photo-1612874742237-6526221588e3?w=200&h=200&fit=crop">
             <img src="https://images.unsplash.com/photo-1612874742237-6526221588e3?w=200&h=200&fit=crop" alt="Паста">
             <div>
                 <div class="product-name">Паста Карбонара</div>
@@ -482,6 +525,8 @@ body {
     
     <div class="order-info">
         <h3 style="color: #6ab2f2; margin-top: 0;">Деталі замовлення #<span id="orderId">12345</span></h3>
+        
+        <img id="orderImage" class="order-image" src="" alt="Товар" style="display: none;">
         
         <div class="order-row">
             <span>Місто:</span>
@@ -542,7 +587,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     const loader = document.getElementById('loader');
-    let selected = { name: null, price: 0 };
+    let selected = { name: null, price: 0, image: null };
     let selectedCity = '';
     let selectedMetro = '';
     let selectedPayment = '';
@@ -589,6 +634,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const totalPriceEl = document.getElementById('totalPrice');
         if (totalPriceEl) {
             totalPriceEl.textContent = selected.price ? `${selected.price} грн` : '—';
+        }
+        
+        const orderImage = document.getElementById('orderImage');
+        if (orderImage && selected.image) {
+            orderImage.src = selected.image;
+            orderImage.style.display = 'block';
         }
     }
 
@@ -750,15 +801,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Вибір страви
-    function selectOption(name, price) {
-        selected = { name, price };
+    function selectOption(name, price, image) {
+        selected = { name, price, image };
         generateOrderId();
         openScreen('payment');
     }
 
     document.querySelectorAll('#choose .option').forEach(opt => {
         opt.addEventListener('click', () => {
-            selectOption(opt.dataset.name, parseFloat(opt.dataset.price));
+            selectOption(opt.dataset.name, parseFloat(opt.dataset.price), opt.dataset.img);
         });
     });
 
