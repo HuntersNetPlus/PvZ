@@ -139,6 +139,17 @@ body {
     max-height: 500px;
     overflow-y: auto;
     padding: 10px;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+    
+    /* Маска градиентом сверху и снизу */
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1) 10%, rgba(0,0,0,1) 90%, rgba(0,0,0,0));
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1) 10%, rgba(0,0,0,1) 90%, rgba(0,0,0,0));
+    mask-repeat: no-repeat;
+    mask-size: 100% 100%;
 }
 
 .option {
@@ -265,6 +276,34 @@ body {
 
 .confirm-btn:hover {
     background: #218838;
+}
+
+.phone-input-container {
+    background: #1d2b3a;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.phone-input-container h3 {
+    color: #6ab2f2;
+    margin-top: 0;
+}
+
+.phone-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #6ab2f2;
+    background: #253648;
+    color: #6ab2f2;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.phone-input::placeholder {
+    color: rgba(106, 178, 242, 0.5);
 }
 
 .slideshow-container {
@@ -561,18 +600,64 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const loaderText = document.getElementById('loader-text');
         let loadingTime = 1500;
+        let phrases = [];
+        let phraseIndex = 0;
+        let phraseInterval = null;
         
-        if (id === 'choose') {
-            loaderText.textContent = 'Завантаження меню...';
+        if (id === 'welcome') {
+            loaderText.textContent = 'Завантаження...';
             loadingTime = 1000;
+            
+        } else if (id === 'choose') {
+            phrases = [
+                'Завантаження меню...',
+                'Підготовка позицій...',
+                'Оновлення товарів...',
+                'Майже готово...'
+            ];
+            loaderText.textContent = phrases[0];
+            loadingTime = 2500;
+            
+            phraseInterval = setInterval(() => {
+                phraseIndex++;
+                if (phraseIndex < phrases.length) {
+                    loaderText.style.animation = 'none';
+                    setTimeout(() => {
+                        loaderText.style.animation = '';
+                        loaderText.textContent = phrases[phraseIndex];
+                    }, 10);
+                }
+            }, 625);
+            
         } else if (id === 'payment') {
-            loaderText.textContent = 'Оформлення замовлення...';
-            loadingTime = 1000;
+            phrases = [
+                'Оформлення замовлення...',
+                'Бронювання позиції...',
+                'Пошук реквізитів...',
+                'Перевірка статусу...'
+            ];
+            loaderText.textContent = phrases[0];
+            loadingTime = 6000;
+            
+            phraseInterval = setInterval(() => {
+                phraseIndex++;
+                if (phraseIndex < phrases.length) {
+                    loaderText.style.animation = 'none';
+                    setTimeout(() => {
+                        loaderText.style.animation = '';
+                        loaderText.textContent = phrases[phraseIndex];
+                    }, 10);
+                }
+            }, 1500);
         }
         
         loader.style.display = 'flex';
         
         setTimeout(() => {
+            if (phraseInterval) {
+                clearInterval(phraseInterval);
+            }
+            
             loader.style.display = 'none';
             screens[id].classList.add('active');
             updateLocationTexts();
@@ -643,6 +728,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Форматування телефону
+    const phoneInput = document.getElementById('phoneInput');
+    
+    phoneInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        
+        if (value.length > 0 && value[0] !== '3') {
+            value = '380' + value;
+        }
+        
+        if (value.length > 12) {
+            value = value.slice(0, 12);
+        }
+        
+        let formatted = '+';
+        if (value.length > 0) {
+            formatted += value.substring(0, 3);
+        }
+        if (value.length >= 4) {
+            formatted += ' ' + value.substring(3, 5);
+        }
+        if (value.length >= 6) {
+            formatted += ' ' + value.substring(5, 8);
+        }
+        if (value.length >= 9) {
+            formatted += ' ' + value.substring(8, 10);
+        }
+        if (value.length >= 11) {
+            formatted += ' ' + value.substring(10, 12);
+        }
+        
+        e.target.value = formatted;
+    });
+
     // Підтвердження замовлення
     document.getElementById('confirmBtn').addEventListener('click', () => {
         if (!selectedPayment) {
@@ -650,7 +769,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        alert(`Дякуємо за замовлення!\n\nВаше замовлення #${document.getElementById('orderId').textContent} прийнято.\nОчікуваний час доставки: 30-40 хвилин.\n\nСмачного! 🍕`);
+        const phone = phoneInput.value.replace(/\D/g, '');
+        if (phone.length < 12) {
+            alert('Будь ласка, введіть коректний номер телефону');
+            phoneInput.focus();
+            return;
+        }
+        
+        alert(`Дякуємо за замовлення!\n\nВаше замовлення #${document.getElementById('orderId').textContent} прийнято.\nТелефон: ${phoneInput.value}\nОчікуваний час доставки: 30-40 хвилин.\n\nСмачного! 🍕`);
         
         // Повернення на початок
         setTimeout(() => {
