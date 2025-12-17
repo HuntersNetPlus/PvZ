@@ -591,10 +591,10 @@ body {
         
     </div>
 
-       <div style="color: #89ED5E";><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Locked%20With%20Key.webp?raw=true" style="width:20px; vertical-align:middle"> Заказ забронирован на <span id="timer">30:00</span></div>
+       <div style="color: #89ED5E"; align; center"><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Locked%20With%20Key.webp?raw=true" style="width:20px; vertical-align:middle"> Замовлення заброньовано на <span id="timer">30:00</span></div>
 
     <div class="payment-methods">
-        <h3>Оберіть спосіб оплати:</h3>
+        <h3>Оберіть зручний спосіб оплати:</h3>
         
         <div class="payment-method" data-method="card">
             <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Identification%20Card.webp?raw=true" width="20" height="20" style="vertical-align: middle;" alt=""> Карткою онлайн
@@ -922,7 +922,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const orderIdEl = document.getElementById('orderId');
                 const orderId = orderIdEl ? orderIdEl.textContent : '00000';
                 
-                alert(`Дякуємо за замовлення!\n\nВаше замовлення #${orderId} прийнято.\nТелефон: ${phoneInput.value}\nОчікуваний час доставки: 30-40 хвилин.\n\nСмачного! 🍕`);
+                alert(`Дякуємо за замовлення!\n\nВаше замовлення #${orderId} прийнято.\nНаш менеджер незабаром зв'яжеться з вами по телефону: ${phoneInput.value}\nОчікуваний час доставки: 30-40 хвилин.\n\nСмачного! 🍕`);
                 
                 setTimeout(() => {
                     location.reload();
