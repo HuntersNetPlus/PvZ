@@ -138,19 +138,34 @@
 }
 
 .orders-widget li {
-  padding: 8px 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  overflow: hidden;
   font-size: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+
+  max-height: 0;
   opacity: 0;
-  transition: opacity 1.2s ease;
+  padding: 0 10px;
+
+  transition:
+    max-height 1.2s ease,
+    opacity 1.2s ease,
+    padding 1.2s ease;
 }
 
 .orders-widget li.show {
+  max-height: 40px;
   opacity: 1;
+  padding: 8px 10px;
 }
 
-.orders-widget li.fade-out {
+.orders-widget li.remove {
+  max-height: 0;
   opacity: 0;
+  padding: 0 10px;
+}
+
+.orders-widget li:last-child {
+  border-bottom: none;
 }
 
 .tooltip-modal img {
@@ -329,7 +344,7 @@ function randomPosition() {
   return positionsPool[Math.floor(Math.random() * positionsPool.length)];
 }
 
-/* позиция обновляется редко */
+/* позиция меняется редко */
 setInterval(() => {
   currentPosition = randomPosition();
 }, 15000);
@@ -341,22 +356,22 @@ function addOrder() {
 
   ordersList.prepend(li);
 
-  // небольшая задержка для fade-in
+  // включаем анимацию появления
   requestAnimationFrame(() => li.classList.add("show"));
 
-  // если строк больше 5 — мягко убираем нижнюю
+  // удаляем нижнюю строку мягко
   if (ordersList.children.length > 5) {
     const last = ordersList.lastElementChild;
     last.classList.remove("show");
-    last.classList.add("fade-out");
+    last.classList.add("remove");
 
     setTimeout(() => {
       last.remove();
-    }, 1200); // время fade-out
+    }, 1200);
   }
 }
 
-/* начальное заполнение */
+/* начальная загрузка */
 for (let i = 0; i < 5; i++) {
   addOrder();
 }
