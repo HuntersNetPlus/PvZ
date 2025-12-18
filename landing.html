@@ -121,8 +121,8 @@
   box-sizing: border-box; /* ОБЯЗАТЕЛЬНО */
 }
 
-   .orders-widget {
-   width: 100%;          /* ← ВОТ ЭТОГО НЕ ХВАТАЛО */
+.orders-widget {
+  width: 340px;
   background: #0f172a;
   color: #e5e7eb;
   font-family: Arial, sans-serif;
@@ -142,19 +142,15 @@
   border-bottom: 1px solid rgba(255,255,255,0.07);
   font-size: 14px;
   opacity: 0;
-  transform: translateY(-6px);
-  animation: smoothIn 0.8s ease forwards;
+  transition: opacity 1.2s ease;
 }
 
-.orders-widget li:last-child {
-  border-bottom: none;
+.orders-widget li.show {
+  opacity: 1;
 }
 
-@keyframes smoothIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.orders-widget li.fade-out {
+  opacity: 0;
 }
 
 .tooltip-modal img {
@@ -314,25 +310,13 @@
 
 const ordersList = document.getElementById("ordersList");
 
-/* 🔹 Рандомные данные */
-const names = [
-  "Алексей",
-  "Мария",
-  "Иван",
-  "Дмитрий",
-  "Анна",
-  "Сергей",
-  "Ольга"
-];
-
-const positionsPool = [
-  1012, 1034, 1051, 1078, 1090,
-  1103, 1127, 1150, 1189, 1204
-];
+/* данные */
+const names = ["Алексей", "Мария", "Иван", "Дмитрий", "Анна", "Сергей"];
+const positionsPool = [1012, 1034, 1051, 1078, 1090, 1103, 1127];
 
 let currentPosition = randomPosition();
 
-/* 🔹 helpers */
+/* helpers */
 function randomId() {
   return Math.floor(100000 + Math.random() * 900000);
 }
@@ -345,31 +329,40 @@ function randomPosition() {
   return positionsPool[Math.floor(Math.random() * positionsPool.length)];
 }
 
-/* 🔹 обновление позиции (реже) */
+/* позиция обновляется редко */
 setInterval(() => {
   currentPosition = randomPosition();
-}, 15000); // раз в 15 секунд
+}, 15000);
 
-/* 🔹 добавление строки */
+/* добавление строки */
 function addOrder() {
   const li = document.createElement("li");
   li.textContent = `#${currentPosition} — ${randomId()} — ${randomName()}`;
 
   ordersList.prepend(li);
 
+  // небольшая задержка для fade-in
+  requestAnimationFrame(() => li.classList.add("show"));
+
+  // если строк больше 5 — мягко убираем нижнюю
   if (ordersList.children.length > 5) {
-    ordersList.removeChild(ordersList.lastChild);
+    const last = ordersList.lastElementChild;
+    last.classList.remove("show");
+    last.classList.add("fade-out");
+
+    setTimeout(() => {
+      last.remove();
+    }, 1200); // время fade-out
   }
 }
 
-/* начальная загрузка */
+/* начальное заполнение */
 for (let i = 0; i < 5; i++) {
   addOrder();
 }
 
-/* «реальное время» */
-setInterval(addOrder, 4000); // строки обновляются чаще
-
+/* обновление */
+setInterval(addOrder, 5000);
   
 </script>
 
