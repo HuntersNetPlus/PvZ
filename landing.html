@@ -121,8 +121,16 @@
   box-sizing: border-box; /* ОБЯЗАТЕЛЬНО */
 }
 
-.orders-widget {
+
+
+
+
+
+
+
+    .orders-widget {
   width: 340px;
+  height: 200px; /* 5 строк */
   background: #0f172a;
   color: #e5e7eb;
   font-family: Arial, sans-serif;
@@ -135,39 +143,21 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  will-change: transform;
 }
 
 .orders-widget li {
-  overflow: hidden;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
   font-size: 14px;
   border-bottom: 1px solid rgba(255,255,255,0.07);
-
-  max-height: 0;
-  opacity: 0;
-  padding: 0 10px;
-
-  transition:
-    max-height 1.2s ease,
-    opacity 1.2s ease,
-    padding 1.2s ease;
+  box-sizing: border-box;
 }
 
-.orders-widget li.show {
-  max-height: 40px;
-  opacity: 1;
-  padding: 8px 10px;
-}
 
-.orders-widget li.remove {
-  max-height: 0;
-  opacity: 0;
-  padding: 0 10px;
-}
-
-.orders-widget li:last-child {
-  border-bottom: none;
-}
-
+    
 .tooltip-modal img {
   width: 60px;
   height: 60px;
@@ -266,8 +256,7 @@
   
 
   <div class="faq-block">
-      </div>
-    <div class="faq-content">
+        <div class="faq-content">
       У нас есть бонусная программа! Заходи в бота, копируй реферальную ссылку и приглашай друзей. Друг получит скидку на первый заказ, а ты получишь до 80% от суммы заказов приглашённых! 
     </div>
   </div>
@@ -320,61 +309,66 @@
   }
 
 
-const ordersList = document.getElementById("ordersList");
+const list = document.getElementById("ordersList");
+const ROW_HEIGHT = 36;
+const VISIBLE_ROWS = 5;
 
 /* данные */
 const names = ["Алексей", "Мария", "Иван", "Дмитрий", "Анна", "Сергей"];
 const positionsPool = [1012, 1034, 1051, 1078, 1090, 1103, 1127];
 
 let currentPosition = randomPosition();
+let offset = 0;
 
 /* helpers */
 function randomId() {
   return Math.floor(100000 + Math.random() * 900000);
 }
-
 function randomName() {
   return names[Math.floor(Math.random() * names.length)];
 }
-
 function randomPosition() {
   return positionsPool[Math.floor(Math.random() * positionsPool.length)];
 }
+function createRow() {
+  const li = document.createElement("li");
+  li.textContent = `#${currentPosition} — ${randomId()} — ${randomName()}`;
+  return li;
+}
 
-/* позиция меняется редко */
+/* редкое обновление позиции */
 setInterval(() => {
   currentPosition = randomPosition();
 }, 15000);
 
-/* добавление строки */
-function addOrder() {
-  const li = document.createElement("li");
-  li.textContent = `#${currentPosition} — ${randomId()} — ${randomName()}`;
-
-  ordersList.prepend(li);
-
-  // включаем анимацию появления
-  requestAnimationFrame(() => li.classList.add("show"));
-
-  // удаляем нижнюю строку мягко
-  if (ordersList.children.length > 5) {
-    const last = ordersList.lastElementChild;
-    last.classList.remove("show");
-    last.classList.add("remove");
-
-    setTimeout(() => {
-      last.remove();
-    }, 1200);
-  }
+/* начальное заполнение (чуть больше 5 для запаса) */
+for (let i = 0; i < VISIBLE_ROWS + 2; i++) {
+  list.appendChild(createRow());
 }
 
-/* начальная загрузка */
-for (let i = 0; i < 5; i++) {
-  addOrder();
+/* основной цикл скролла */
+function scrollUp() {
+  offset += ROW_HEIGHT;
+
+  list.style.transition = "transform 1.8s ease";
+  list.style.transform = `translateY(-${offset}px)`;
+
+  setTimeout(() => {
+    list.style.transition = "none";
+
+    // удаляем верхнюю строку
+    list.removeChild(list.firstElementChild);
+
+    // добавляем новую снизу
+    list.appendChild(createRow());
+
+    offset -= ROW_HEIGHT;
+    list.style.transform = `translateY(-${offset}px)`;
+  }, 1800);
 }
 
-/* обновление */
-setInterval(addOrder, 5000);
+/* запуск */
+setInterval(scrollUp, 5000);
   
 </script>
 
