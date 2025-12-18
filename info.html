@@ -27,14 +27,18 @@
     }
 
     .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+  text-align: center;
+  margin-bottom: 20px;
+  display: flex;           /* добавить */
+  flex-direction: column;  /* добавить */
+  align-items: center;     /* добавить */
+}
 
-    .header img {
+.header img {
   width: 550px;
-  display: block;        /* делаем блочным элементом */
-  margin: 0 auto;        /* центрируем по горизонтали */
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
 }
 
     .header h1 {
