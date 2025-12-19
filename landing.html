@@ -618,7 +618,7 @@ shareBtn.addEventListener("click", async () => {
       await navigator.clipboard.writeText(SHARE_LINK);
 
       const oldText = btnText.textContent;
-      btnText.textContent = "Скопировано";
+      btnText.textContent = "Скопировано ✔";
 
       setTimeout(() => {
         btnText.textContent = oldText;
