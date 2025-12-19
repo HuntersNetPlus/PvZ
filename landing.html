@@ -559,30 +559,24 @@
 </body>
 <script>
  
-  function closeStartTooltip() {
+function closeStartTooltip() {
   document.getElementById('startTooltip').style.display = 'none';
   document.getElementById('startOverlay').style.display = 'none';
-
+  
   // запускаем анимацию статистики
   startStatsAnimation();
 }
 
-
-
-
-
-  function startStatsAnimation() {
+function startStatsAnimation() {
   document.querySelectorAll(".stat-card").forEach(card => {
     const target = +card.dataset.value;
     const numberEl = card.querySelector(".stat-number");
-
     const duration = 1000;
     const startTime = performance.now();
 
     function animate(time) {
       const progress = Math.min((time - startTime) / duration, 1);
       const value = Math.floor(progress * target);
-
       numberEl.textContent = value.toLocaleString("ru-RU");
 
       if (progress < 1) {
@@ -591,17 +585,15 @@
         numberEl.textContent = target.toLocaleString("ru-RU");
       }
     }
-
     requestAnimationFrame(animate);
   });
 }
 
- 
+// === ВИДЖЕТ ЗАКАЗОВ ===
 const list = document.getElementById("ordersList");
 const ROW_HEIGHT = 36;
 const VISIBLE_ROWS = 5;
 
-/* данные */
 const names = ["Hsffsr", "1sffse", "ssffs3", "csffsx", "tsffsr1", "Rsffsm"];
 const cities = ["Москва", "Питер", "Казань", "Новосибирск", "Самара", "Н.Новгород", "Екатеринбург"];
 const positionsPool = [1012, 1034, 1051, 1078, 1090, 1103, 1127];
@@ -609,7 +601,6 @@ const positionsPool = [1012, 1034, 1051, 1078, 1090, 1103, 1127];
 let currentPosition = randomFrom(positionsPool);
 let offset = 0;
 
-/* helpers */
 function randomFrom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -625,13 +616,11 @@ function splitName(name) {
   return { first: name[0], middle: name.slice(1, -1), last: name[name.length - 1] };
 }
 
-// создаём спойлер с «снежинками»
 function createSpoiler(content) {
   const span = document.createElement("span");
   span.className = "spoiler";
   span.textContent = content;
 
-  // увеличиваем количество снежинок, например до 12
   for (let i = 0; i < 42; i++) {
     const dot = document.createElement("span");
     dot.className = "snowflake";
@@ -640,10 +629,8 @@ function createSpoiler(content) {
     dot.style.animationDuration = (1.5 + Math.random() * 1.5) + "s";
     span.appendChild(dot);
   }
-
   return span;
 }
-
 
 function createRow() {
   const name = randomFrom(names);
@@ -651,8 +638,6 @@ function createRow() {
   const parts = splitName(name);
 
   const li = document.createElement("li");
-
-  // создаём спойлер для середины имени
   const middleSpoiler = createSpoiler(parts.middle);
 
   li.innerHTML = `
@@ -662,7 +647,6 @@ function createRow() {
     </span>
   `;
 
-  // вставляем спойлер и последнюю букву
   li.querySelector(".name").appendChild(middleSpoiler);
 
   const last = document.createElement("span");
@@ -673,25 +657,14 @@ function createRow() {
   return li;
 }
 
-
-
-
- 
-
-
-
-  
-/* позиция меняется редко */
 setInterval(() => {
   currentPosition = randomFrom(positionsPool);
 }, 15000);
 
-/* начальное заполнение */
 for (let i = 0; i < VISIBLE_ROWS + 2; i++) {
   list.appendChild(createRow());
 }
 
-/* бесконечный скролл */
 function scrollUp() {
   offset += ROW_HEIGHT;
   list.style.transition = "transform 2.5s cubic-bezier(.22,.61,.36,1)";
@@ -708,25 +681,20 @@ function scrollUp() {
 
 setInterval(scrollUp, 6000);
 
-
-
-  
-
+// === КНОПКА ШАРИНГА ===
 const shareBtn = document.getElementById("shareBtn");
 const btnText = shareBtn.querySelector(".btn-text");
 const progressBar = shareBtn.querySelector(".progress-bar");
 
-const SHARE_LINK = "https://site.ru/ref123"; // ← твоя ссылка
+const SHARE_LINK = "https://site.ru/ref123";
 
-let state = "idle"; // idle → loading → active
+let state = "idle";
 let copied = false;
-
 
 shareBtn.addEventListener("click", async () => {
   if (state === "idle") {
     state = "loading";
     shareBtn.classList.add("loading");
-
     progressBar.style.width = "100%";
 
     setTimeout(() => {
@@ -741,44 +709,17 @@ shareBtn.addEventListener("click", async () => {
   }
 
   if (state === "active") {
-  try {
-    await navigator.clipboard.writeText(SHARE_LINK);
-
-    if (!copied) {
-      btnText.textContent = "Скопировано";
-      copied = true;
-    }
-
-  } catch {
-    alert("Не удалось скопировать ссылку");
-  }
-}
-
-
- 
-document.querySelectorAll(".stat-card").forEach(card => {
-  const target = +card.dataset.value;
-  const numberEl = card.querySelector(".stat-number");
-
-  const duration = 1000;
-  const startTime = performance.now();
-
-  function animate(time) {
-    const progress = Math.min((time - startTime) / duration, 1);
-    const value = Math.floor(progress * target);
-
-    numberEl.textContent = value.toLocaleString("ru-RU");
-
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    } else {
-      numberEl.textContent = target.toLocaleString("ru-RU");
+    try {
+      await navigator.clipboard.writeText(SHARE_LINK);
+      if (!copied) {
+        btnText.textContent = "Скопировано";
+        copied = true;
+      }
+    } catch {
+      alert("Не удалось скопировать ссылку");
     }
   }
-
-  requestAnimationFrame(animate);
 });
-
 
   
 </script>
