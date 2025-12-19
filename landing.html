@@ -762,6 +762,10 @@ shareBtn.addEventListener("click", async () => {
   }
 });
 
+
+
+  let positionQueue = [];
+
   function getNextPosition() {
   if (positionQueue.length === 0) {
     positionQueue = [...positionsPool].sort(() => Math.random() - 0.5);
