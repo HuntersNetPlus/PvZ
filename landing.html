@@ -550,12 +550,44 @@
   
 </body>
 <script>
+ 
   function closeStartTooltip() {
-    document.getElementById('startTooltip').style.display = 'none';
-    document.getElementById('startOverlay').style.display = 'none';
-  }
+  document.getElementById('startTooltip').style.display = 'none';
+  document.getElementById('startOverlay').style.display = 'none';
 
-  
+  // запускаем анимацию статистики
+  startStatsAnimation();
+}
+
+
+
+
+
+  function startStatsAnimation() {
+  document.querySelectorAll(".stat-card").forEach(card => {
+    const target = +card.dataset.value;
+    const numberEl = card.querySelector(".stat-number");
+
+    const duration = 1000;
+    const startTime = performance.now();
+
+    function animate(time) {
+      const progress = Math.min((time - startTime) / duration, 1);
+      const value = Math.floor(progress * target);
+
+      numberEl.textContent = value.toLocaleString("ru-RU");
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        numberEl.textContent = target.toLocaleString("ru-RU");
+      }
+    }
+
+    requestAnimationFrame(animate);
+  });
+}
+
  
 const list = document.getElementById("ordersList");
 const ROW_HEIGHT = 36;
