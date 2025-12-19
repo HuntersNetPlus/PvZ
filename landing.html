@@ -636,6 +636,16 @@ const positionsPool = [
   "Мефедрон"
 ];
 
+  function getNextPosition() {
+  if (positionQueue.length === 0) {
+    // создаём новую перемешанную очередь
+    positionQueue = [...positionsPool].sort(() => Math.random() - 0.5);
+  }
+  return positionQueue.pop();
+}
+
+  let positionQueue = [];
+
 let currentPosition = randomFrom(positionsPool);
 let offset = 0;
 
@@ -679,10 +689,7 @@ function createRow() {
   const middleSpoiler = createSpoiler(parts.middle);
 
  li.innerHTML = `
-  <span class="position">
-    <span class="position-text">${currentPosition}</span>
-  </span>
-  – ID${randomId()} – ${city} –
+   ${getNextPosition()} – ID${randomId()} – ${city} –
   <span class="name">
     <span class="name-visible">${parts.first}</span>
   </span>
@@ -698,9 +705,7 @@ function createRow() {
   return li;
 }
 
-setInterval(() => {
-  currentPosition = randomFrom(positionsPool);
-}, 15000);
+ 
 
 for (let i = 0; i < VISIBLE_ROWS + 2; i++) {
   list.appendChild(createRow());
@@ -763,15 +768,7 @@ shareBtn.addEventListener("click", async () => {
 });
 
 
-
-  let positionQueue = [];
-
-  function getNextPosition() {
-  if (positionQueue.length === 0) {
-    positionQueue = [...positionsPool].sort(() => Math.random() - 0.5);
-  }
-  return positionQueue.pop();
-}
+ 
 
 
   
