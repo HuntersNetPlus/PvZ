@@ -348,6 +348,45 @@
 }
 
 
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.stat-card {
+  background: #1d2b3a;
+  border-radius: 10px;
+  padding: 14px 8px;
+  text-align: center;
+  color: #6ab2f2;
+}
+
+.stat-card img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 8px;
+}
+
+.stat-number {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.stat-label {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* мобильная адаптация */
+@media (max-width: 380px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 
     
 
@@ -395,6 +434,52 @@
      style="vertical-align: middle;"> Дарим хорошее настроение с 2017 года!
     </div>
   </div>
+
+
+
+
+
+
+
+<div class="stats-grid">
+  <div class="stat-card" data-value="16000" data-label="сделок">
+    <img src="https://via.placeholder.com/50" alt="">
+    <div class="stat-number">0</div>
+    <div class="stat-label">сделок</div>
+  </div>
+
+  <div class="stat-card" data-value="8500" data-label="клиентов">
+    <img src="https://via.placeholder.com/50" alt="">
+    <div class="stat-number">0</div>
+    <div class="stat-label">клиентов</div>
+  </div>
+
+  <div class="stat-card" data-value="420" data-label="партнёров">
+    <img src="https://via.placeholder.com/50" alt="">
+    <div class="stat-number">0</div>
+    <div class="stat-label">партнёров</div>
+  </div>
+
+  <div class="stat-card" data-value="120" data-label="городов">
+    <img src="https://via.placeholder.com/50" alt="">
+    <div class="stat-number">0</div>
+    <div class="stat-label">городов</div>
+  </div>
+
+  <div class="stat-card" data-value="98" data-label="% доверия">
+    <img src="https://via.placeholder.com/50" alt="">
+    <div class="stat-number">0</div>
+    <div class="stat-label">% доверия</div>
+  </div>
+
+  <div class="stat-card" data-value="7" data-label="лет работы">
+    <img src="https://via.placeholder.com/50" alt="">
+    <div class="stat-number">0</div>
+    <div class="stat-label">лет работы</div>
+  </div>
+</div>
+
+  
 
 
   
@@ -630,6 +715,28 @@ shareBtn.addEventListener("click", async () => {
 });
 
  
+document.querySelectorAll(".stat-card").forEach(card => {
+  const target = +card.dataset.value;
+  const numberEl = card.querySelector(".stat-number");
+
+  const duration = 1000;
+  const startTime = performance.now();
+
+  function animate(time) {
+    const progress = Math.min((time - startTime) / duration, 1);
+    const value = Math.floor(progress * target);
+
+    numberEl.textContent = value.toLocaleString("ru-RU");
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      numberEl.textContent = target.toLocaleString("ru-RU");
+    }
+  }
+
+  requestAnimationFrame(animate);
+});
 
 
   
