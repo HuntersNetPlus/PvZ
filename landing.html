@@ -250,10 +250,13 @@
   cursor: pointer;
 }
 
-   .share-btn {
+    
+
+.share-btn {
+  position: relative;
   width: 100%;
   padding: 14px;
-  margin-top: 5px;
+  margin-top: 16px;
 
   background: #3a3a3a;
   color: #aaa;
@@ -264,10 +267,12 @@
   font-weight: bold;
 
   cursor: pointer;
+  overflow: hidden;
 
   transition:
     background-color 0.6s ease,
     color 0.4s ease,
+    box-shadow 0.6s ease,
     transform 0.15s ease;
 }
 
@@ -275,11 +280,60 @@
   transform: scale(0.97);
 }
 
+.share-btn.loading {
+  cursor: default;
+}
+
+/* текст поверх всего */
+.share-btn .btn-text {
+  position: relative;
+  z-index: 2;
+}
+
+/* прогресс-бар */
+.progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: #22c55e;
+  opacity: 0.35;
+  z-index: 1;
+  transition: width 1s linear;
+}
+
 /* активное состояние */
 .share-btn.active {
   background: #22c55e;
   color: #000;
+  box-shadow:
+    0 0 12px rgba(34,197,94,0.7),
+    0 0 24px rgba(34,197,94,0.4);
 }
+
+/* лёгкое пульсирующее свечение */
+.share-btn.active::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 14px;
+  background: rgba(34,197,94,0.25);
+  filter: blur(12px);
+  opacity: 0;
+  animation: glowPulse 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes glowPulse {
+  0% { opacity: 0.2; }
+  50% { opacity: 0.6; }
+  100% { opacity: 0.2; }
+}
+
+
+
+    
 
 
 .overlay {
@@ -344,7 +398,8 @@
      <div class="faq-header">
         </div>
     <div class="faq-content">
-    <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Animals%20and%20Nature/High%20Voltage.webp?raw=true"> Вот наша статистика в реальном времени!
+    <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Animals%20and%20Nature/High%20Voltage.webp?raw=true"
+     style="vertical-align: middle;"> Вот наша статистика в реальном времени!
     </div>
   </div>
   
@@ -365,9 +420,9 @@
   </div>
    
 <button class="share-btn" id="shareBtn">
-  Получить ссылку
+  <span class="btn-text">Получить ссылку</span>
+  <span class="progress-bar"></span>
 </button>
-
 
 
   
@@ -517,31 +572,44 @@ setInterval(scrollUp, 6000);
   
 
 const shareBtn = document.getElementById("shareBtn");
+const btnText = shareBtn.querySelector(".btn-text");
+const progressBar = shareBtn.querySelector(".progress-bar");
+
 const SHARE_LINK = "https://site.ru/ref123"; // ← твоя ссылка
 
-let isActive = false;
+let state = "idle"; // idle → loading → active
 
 shareBtn.addEventListener("click", async () => {
-  // первый клик — активируем кнопку
-  if (!isActive) {
-    isActive = true;
-    shareBtn.classList.add("active");
-    shareBtn.textContent = "Поделиться ссылкой";
+  if (state === "idle") {
+    state = "loading";
+    shareBtn.classList.add("loading");
+
+    progressBar.style.width = "100%";
+
+    setTimeout(() => {
+      shareBtn.classList.remove("loading");
+      shareBtn.classList.add("active");
+      btnText.textContent = "Поделиться ссылкой";
+      progressBar.style.opacity = "0";
+      state = "active";
+    }, 1000);
+
     return;
   }
 
-  // последующие клики — копируем ссылку
-  try {
-    await navigator.clipboard.writeText(SHARE_LINK);
+  if (state === "active") {
+    try {
+      await navigator.clipboard.writeText(SHARE_LINK);
 
-    const oldText = shareBtn.textContent;
-    shareBtn.textContent = "Ссылка скопирована";
+      const oldText = btnText.textContent;
+      btnText.textContent = "Скопировано";
 
-    setTimeout(() => {
-      shareBtn.textContent = oldText;
-    }, 1200);
-  } catch (e) {
-    alert("Не удалось скопировать ссылку");
+      setTimeout(() => {
+        btnText.textContent = oldText;
+      }, 1200);
+    } catch {
+      alert("Не удалось скопировать ссылку");
+    }
   }
 });
 
