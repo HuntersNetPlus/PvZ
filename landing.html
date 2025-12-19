@@ -250,7 +250,7 @@
   cursor: pointer;
 }
 
-    .share-btn {
+   .share-btn {
   width: 100%;
   padding: 14px;
   margin-top: 16px;
@@ -266,16 +266,21 @@
   cursor: pointer;
 
   transition:
-    background-color 1s ease,
-    color 0.6s ease,
-    transform 0.4s ease;
+    background-color 0.6s ease,
+    color 0.4s ease,
+    transform 0.15s ease;
+}
+
+.share-btn:active {
+  transform: scale(0.97);
 }
 
 /* активное состояние */
 .share-btn.active {
-  background: #22c55e; /* зелёный */
+  background: #22c55e;
   color: #000;
 }
+
 
 .overlay {
   position: fixed;
@@ -356,9 +361,11 @@
       У нас есть бонусная программа! Заходи в бота, копируй реферальную ссылку и приглашай друзей. Друг получит скидку на первый заказ, а ты получишь до 80% от суммы заказов приглашённых тобой друзей! 
     </div>
   </div>
-   <button class="share-btn" id="shareBtn">
-  Загрузка...
+   
+<button class="share-btn" id="shareBtn">
+  Получить ссылку
 </button>
+
 
 
   
@@ -397,7 +404,7 @@ const ROW_HEIGHT = 36;
 const VISIBLE_ROWS = 5;
 
 /* данные */
-const names = ["@fsffsr", "1sffse", "ssffs3", "csffsx", "tsffsr1", "Rsffsm"];
+const names = ["Hsffsr", "1sffse", "ssffs3", "csffsx", "tsffsr1", "Rsffsm"];
 const cities = ["Москва", "Санкт-Петербург", "Казань", "Новосибирск", "Самара", "Нижний Новгород"];
 const positionsPool = [1012, 1034, 1051, 1078, 1090, 1103, 1127];
 
