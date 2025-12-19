@@ -19,7 +19,7 @@
 }
 
 .name-visible {
-  color: #e5e7eb;
+  color: #6ab2f2;
 }
 
 .spoiler {
@@ -38,6 +38,7 @@
   inset: 0;
   color: #9ca3af;
   filter: blur(4px);
+  opacity: 0.9;
 }
 
 .snowflake {
@@ -53,7 +54,7 @@
   animation-iteration-count: infinite;
 }
 
-/* каждая снежинка получает случайную анимацию */
+/* каждая снежинка имеет свою анимацию */
 .snowflake:nth-child(1) { animation-name: snow1; animation-duration: 3.2s; }
 .snowflake:nth-child(2) { animation-name: snow2; animation-duration: 3.8s; }
 .snowflake:nth-child(3) { animation-name: snow3; animation-duration: 4.1s; }
@@ -67,8 +68,6 @@
 @keyframes snow4 { 0%{transform:translate(0,0);} 25%{transform:translate(-1px,4px);}50%{transform:translate(2px,8px);}75%{transform:translate(-2px,12px);}100%{transform:translate(0,0);} }
 @keyframes snow5 { 0%{transform:translate(0,0);} 25%{transform:translate(3px,3px);}50%{transform:translate(-3px,6px);}75%{transform:translate(1px,9px);}100%{transform:translate(0,0);} }
 @keyframes snow6 { 0%{transform:translate(0,0);} 25%{transform:translate(-3px,5px);}50%{transform:translate(2px,10px);}75%{transform:translate(-1px,12px);}100%{transform:translate(0,0);} }
-
-
 
 
 
@@ -201,7 +200,7 @@
 
     .orders-widget {
     width:90%;
-  max-width: 365px;
+  max-width: 375px;
   height: 200px; /* 5 строк */
   background: #1d2b3a;
   color: #6ab2f2;
@@ -363,20 +362,7 @@
     document.getElementById('startOverlay').style.display = 'none';
   }
 
-  function createSpoiler(content) {
-  const span = document.createElement("span");
-  span.className = "spoiler";
-  span.dataset.text = content;
-
-  // создаём 6 "снежинок" внутри
-  for (let i = 0; i < 6; i++) {
-    const dot = document.createElement("span");
-    dot.className = "snowflake";
-    span.appendChild(dot);
-  }
-
-  return span;
-}
+  
  
 const list = document.getElementById("ordersList");
 const ROW_HEIGHT = 36;
@@ -406,6 +392,22 @@ function splitName(name) {
   return { first: name[0], middle: name.slice(1, -1), last: name[name.length - 1] };
 }
 
+// создаём спойлер с «снежинками»
+function createSpoiler(content) {
+  const span = document.createElement("span");
+  span.className = "spoiler";
+  span.dataset.text = content;
+
+  // создаём 6 снежинок
+  for (let i = 0; i < 6; i++) {
+    const dot = document.createElement("span");
+    dot.className = "snowflake";
+    span.appendChild(dot);
+  }
+
+  return span;
+}
+
 function createRow() {
   const name = randomFrom(names);
   const city = randomFrom(cities);
@@ -413,6 +415,7 @@ function createRow() {
 
   const li = document.createElement("li");
 
+  // создаём спойлер для середины имени
   const middleSpoiler = createSpoiler(parts.middle);
 
   li.innerHTML = `
@@ -421,7 +424,10 @@ function createRow() {
       <span class="name-visible">${parts.first}</span>
     </span>
   `;
+
+  // вставляем спойлер и последнюю букву
   li.querySelector(".name").appendChild(middleSpoiler);
+
   const last = document.createElement("span");
   last.className = "name-visible";
   last.textContent = parts.last;
@@ -429,6 +435,7 @@ function createRow() {
 
   return li;
 }
+
 
 
 
