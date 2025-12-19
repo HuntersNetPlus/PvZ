@@ -16,45 +16,63 @@
 .spoiler {
   position: relative;
   display: inline-block;
-  color: transparent;
-  background: #9ca3af;
-  border-radius: 4px;
   padding: 0 4px;
+  border-radius: 4px;
+  background: #9ca3af;
+  color: transparent;
   overflow: hidden;
 }
 
-/* сам текст (скрыт) */
+/* размазанный оригинальный текст */
 .spoiler::before {
   content: attr(data-text);
   position: absolute;
   inset: 0;
   color: #9ca3af;
   filter: blur(4px);
+  opacity: 0.8;
 }
 
-/* "снежинки" */
+/* снежинки — несколько слоёв */
 .spoiler::after {
   content: "";
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(#ffffff 1px, transparent 1px),
-    radial-gradient(#ffffff 1px, transparent 1px);
-  background-size: 6px 6px, 10px 10px;
-  background-position: 0 0, 3px 3px;
-  opacity: 0.35;
-  animation: snow 3s linear infinite;
+    radial-gradient(#fff 1px, transparent 1px),
+    radial-gradient(#fff 1px, transparent 1px),
+    radial-gradient(#fff 1px, transparent 1px);
+  background-size:
+    6px 6px,
+    10px 10px,
+    14px 14px;
+  background-position:
+    0 0,
+    5px 3px,
+    2px 7px;
+  opacity: 0.45;
+  animation: snowChaos 2.8s linear infinite;
   pointer-events: none;
 }
 
-@keyframes snow {
-  from {
-    transform: translateY(0);
+@keyframes snowChaos {
+  0% {
+    transform: translate(0, 0);
   }
-  to {
-    transform: translateY(12px);
+  25% {
+    transform: translate(-2px, 4px);
+  }
+  50% {
+    transform: translate(3px, 8px);
+  }
+  75% {
+    transform: translate(-1px, 12px);
+  }
+  100% {
+    transform: translate(2px, 16px);
   }
 }
+
 
 
 
@@ -348,67 +366,74 @@
   }
 
 
+<script>
 const list = document.getElementById("ordersList");
 const ROW_HEIGHT = 36;
 const VISIBLE_ROWS = 5;
 
 /* данные */
-const names = ["Алексей", "Мария", "Иван", "Дмитрий", "Анна", "Сергей"];
+const names = ["Алексей", "Мария", "Иван", "Дмитрий", "Анастасия", "Сергей"];
+const cities = ["Москва", "Санкт-Петербург", "Казань", "Новосибирск", "Екатеринбург", "Краснодар"];
 const positionsPool = [1012, 1034, 1051, 1078, 1090, 1103, 1127];
 
-let currentPosition = randomPosition();
+let currentPosition = randomFrom(positionsPool);
 let offset = 0;
 
 /* helpers */
+function randomFrom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
 function randomId() {
   return Math.floor(100000 + Math.random() * 900000);
 }
-function randomName() {
-  return names[Math.floor(Math.random() * names.length)];
+
+function maskName(name) {
+  if (name.length <= 2) return name[0] + "•";
+  const middle = "•".repeat(name.length - 2);
+  return name[0] + middle + name[name.length - 1];
 }
-function randomPosition() {
-  return positionsPool[Math.floor(Math.random() * positionsPool.length)];
-}
+
 function createRow() {
-  const name = randomName();
+  const name = randomFrom(names);
+  const masked = maskName(name);
+  const city = randomFrom(cities);
+
   const li = document.createElement("li");
-  li.innerHTML = `#${currentPosition} — ${randomId()} — <span class="spoiler" data-text="${name}">${name}</span>`;
+  li.innerHTML = `
+    ${currentPosition} – ID${randomId()} – ${city} –
+    <span class="spoiler" data-text="${name}">${masked}</span>
+  `;
   return li;
 }
 
-/* редкое обновление позиции */
+/* позиция меняется редко */
 setInterval(() => {
-  currentPosition = randomPosition();
+  currentPosition = randomFrom(positionsPool);
 }, 15000);
 
-/* начальное заполнение (чуть больше 5 для запаса) */
+/* начальное заполнение */
 for (let i = 0; i < VISIBLE_ROWS + 2; i++) {
   list.appendChild(createRow());
 }
 
-/* основной цикл скролла */
+/* бесконечный скролл */
 function scrollUp() {
   offset += ROW_HEIGHT;
-
-  list.style.transition = "transform 1.8s ease";
+  list.style.transition = "transform 2.5s cubic-bezier(.22,.61,.36,1)";
   list.style.transform = `translateY(-${offset}px)`;
 
   setTimeout(() => {
     list.style.transition = "none";
-
-    // удаляем верхнюю строку
     list.removeChild(list.firstElementChild);
-
-    // добавляем новую снизу
     list.appendChild(createRow());
-
     offset -= ROW_HEIGHT;
     list.style.transform = `translateY(-${offset}px)`;
-  }, 1800);
+  }, 2500);
 }
 
-/* запуск */
-setInterval(scrollUp, 5000);
+setInterval(scrollUp, 6000);
+ 
 
 
  
