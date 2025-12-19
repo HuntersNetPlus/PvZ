@@ -689,12 +689,15 @@ function createRow() {
   const middleSpoiler = createSpoiler(parts.middle);
 
  li.innerHTML = `
-   ${getNextPosition()} – ID${randomId()} – ${city} –
+  <span class="position">
+    <span class="position-text">${getNextPosition()}</span>
+  </span>
+  – ID${randomId()} – ${city} –
   <span class="name">
     <span class="name-visible">${parts.first}</span>
   </span>
 `;
-
+  
   li.querySelector(".name").appendChild(middleSpoiler);
 
   const last = document.createElement("span");
