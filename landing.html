@@ -719,6 +719,8 @@ const progressBar = shareBtn.querySelector(".progress-bar");
 const SHARE_LINK = "https://site.ru/ref123"; // ← твоя ссылка
 
 let state = "idle"; // idle → loading → active
+let copied = false;
+
 
 shareBtn.addEventListener("click", async () => {
   if (state === "idle") {
@@ -739,20 +741,19 @@ shareBtn.addEventListener("click", async () => {
   }
 
   if (state === "active") {
-    try {
-      await navigator.clipboard.writeText(SHARE_LINK);
+  try {
+    await navigator.clipboard.writeText(SHARE_LINK);
 
-      const oldText = btnText.textContent;
-      btnText.textContent = "Ссылка скопирована ✔";
-
-      setTimeout(() => {
-        btnText.textContent = oldText;
-      }, 1200);
-    } catch {
-      alert("Не удалось скопировать ссылку");
+    if (!copied) {
+      btnText.textContent = "Скопировано";
+      copied = true;
     }
+
+  } catch {
+    alert("Не удалось скопировать ссылку");
   }
-});
+}
+
 
  
 document.querySelectorAll(".stat-card").forEach(card => {
