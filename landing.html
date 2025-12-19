@@ -255,16 +255,12 @@
   bottom: 0;
 
   display: flex;
-  gap: 10px;
+  gap: 12px;
 
   padding: 12px;
-  margin-top: 20px;
 
-  background: rgba(23, 33, 43, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  border-top: 1px solid rgba(255,255,255,0.08);
+  background: transparent;   /* ВАЖНО */
+  border-top: none;
 
   opacity: 0;
   transform: translateY(20px);
@@ -275,43 +271,64 @@
     transform 0.5s ease;
 }
 
-/* появление */
 .bottom-actions.show {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
 
+
 .action-btn {
   flex: 1;
-  text-align: center;
   padding: 14px 0;
 
-  border-radius: 12px;
-  font-weight: bold;
+  text-align: center;
   font-size: 15px;
+  font-weight: 600;
   text-decoration: none;
+  color: #ffffff;
+
+  border-radius: 14px;
+
+  /* стекло */
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(255,255,255,0.25);
 
   transition:
-    background-color 0.3s ease,
-    transform 0.15s ease;
+    background 0.3s ease,
+    transform 0.15s ease,
+    box-shadow 0.3s ease;
 }
 
 .action-btn:active {
-  transform: scale(0.97);
+  transform: scale(0.96);
 }
 
-/* кнопки */
-.action-btn.primary {
-  background: #22c55e;
-  color: #000;
+/* hover / tap эффект */
+.action-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
-.action-btn.secondary {
-  background: #6ab2f2;
-  color: #000;
+/* лёгкое свечение */
+.action-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 20px rgba(255,255,255,0.15);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
+.action-btn:hover::after {
+  opacity: 1;
+}
+
+    
     
 .tooltip-modal img {
   width: 60px;
