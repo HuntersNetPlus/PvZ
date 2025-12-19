@@ -362,7 +362,20 @@
     document.getElementById('startOverlay').style.display = 'none';
   }
 
+  function createSpoiler(content) {
+  const span = document.createElement("span");
+  span.className = "spoiler";
+  span.dataset.text = content;
 
+  // создаём 6 "снежинок" внутри
+  for (let i = 0; i < 6; i++) {
+    const dot = document.createElement("span");
+    dot.className = "snowflake";
+    span.appendChild(dot);
+  }
+
+  return span;
+}
  
 const list = document.getElementById("ordersList");
 const ROW_HEIGHT = 36;
@@ -418,20 +431,7 @@ function createRow() {
 
 
 
-  function createSpoiler(content) {
-  const span = document.createElement("span");
-  span.className = "spoiler";
-  span.dataset.text = content;
-
-  // создаём 6 "снежинок" внутри
-  for (let i = 0; i < 6; i++) {
-    const dot = document.createElement("span");
-    dot.className = "snowflake";
-    span.appendChild(dot);
-  }
-
-  return span;
-}
+ 
 
 
 
