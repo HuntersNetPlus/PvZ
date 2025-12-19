@@ -343,11 +343,9 @@
 
   <div class="faq-block">
      <div class="faq-header">
-      <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Animals%20and%20Nature/High%20Voltage.webp?raw=true">
-    <div class="faq-title">По какому принципу работает маркетплейс?</div>
-  </div>
+        </div>
     <div class="faq-content">
-   Вот наша статистика в реальном времени!
+    <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Animals%20and%20Nature/High%20Voltage.webp?raw=true"> Вот наша статистика в реальном времени!
     </div>
   </div>
   
@@ -514,29 +512,40 @@ function scrollUp() {
 }
 
 setInterval(scrollUp, 6000);
- 
+
+
+
+  
 
 const shareBtn = document.getElementById("shareBtn");
-let shareActivated = false;
+const SHARE_LINK = "https://site.ru/ref123"; // ← твоя ссылка
 
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && !shareActivated) {
-      shareActivated = true;
+let isActive = false;
 
-      // запускаем анимацию
-      shareBtn.classList.add("active");
+shareBtn.addEventListener("click", async () => {
+  // первый клик — активируем кнопку
+  if (!isActive) {
+    isActive = true;
+    shareBtn.classList.add("active");
+    shareBtn.textContent = "Поделиться ссылкой";
+    return;
+  }
 
-      setTimeout(() => {
-        shareBtn.textContent = "Поделиться ссылкой";
-      }, 400);
-    }
-  });
-}, {
-  threshold: 0.6
+  // последующие клики — копируем ссылку
+  try {
+    await navigator.clipboard.writeText(SHARE_LINK);
+
+    const oldText = shareBtn.textContent;
+    shareBtn.textContent = "Ссылка скопирована";
+
+    setTimeout(() => {
+      shareBtn.textContent = oldText;
+    }, 1200);
+  } catch (e) {
+    alert("Не удалось скопировать ссылку");
+  }
 });
 
-observer.observe(shareBtn);
  
 
 
