@@ -396,20 +396,21 @@ function splitName(name) {
 function createSpoiler(content) {
   const span = document.createElement("span");
   span.className = "spoiler";
-  span.textContent = content;  // текст вставляем внутрь
+  span.textContent = content;
 
-  // создаём 6 снежинок
-  for (let i = 0; i < 6; i++) {
+  // увеличиваем количество снежинок, например до 12
+  for (let i = 0; i < 12; i++) {
     const dot = document.createElement("span");
     dot.className = "snowflake";
-    // случайное стартовое положение
     dot.style.top = Math.random() * 100 + "%";
     dot.style.left = Math.random() * 100 + "%";
+    dot.style.animationDuration = (1.5 + Math.random() * 1.5) + "s";
     span.appendChild(dot);
   }
 
   return span;
 }
+
 
 function createRow() {
   const name = randomFrom(names);
