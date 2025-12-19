@@ -397,8 +397,8 @@ const ROW_HEIGHT = 36;
 const VISIBLE_ROWS = 5;
 
 /* данные */
-const names = ["Алексей", "Мария", "Иван", "Дмитрий", "Анастасия", "Сергей"];
-const cities = ["Москва", "Санкт-Петербург", "Казань", "Новосибирск", "Екатеринбург", "Краснодар"];
+const names = ["@fsffsr", "1sffse", "ssffs3", "csffsx", "tsffsr1", "Rsffsm"];
+const cities = ["Москва", "Санкт-Петербург", "Казань", "Новосибирск", "Самара", "Нижний Новгород"];
 const positionsPool = [1012, 1034, 1051, 1078, 1090, 1103, 1127];
 
 let currentPosition = randomFrom(positionsPool);
@@ -452,7 +452,7 @@ function createRow() {
 
   li.innerHTML = `
     ${currentPosition} – ID${randomId()} – ${city} – 
-    <span class="name">
+    <span class="name">@
       <span class="name-visible">${parts.first}</span>
     </span>
   `;
