@@ -355,6 +355,37 @@
   100% { opacity: 0.2; }
 }
 
+    .position {
+  position: relative;
+  max-width: 5ch;           /* ≈ 5 символов */
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.position-text {
+  color: #ffffff;
+}
+
+/* градиент растворения */
+.position::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1.5ch;
+  height: 100%;
+  pointer-events: none;
+
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,0),
+    #1d2b3a   /* фон строки */
+  );
+}
+
+
 
 .stats-grid {
   display: grid;
@@ -596,7 +627,14 @@ const VISIBLE_ROWS = 5;
 
 const names = ["Hsffsr", "1sffse", "ssffs3", "csffsx", "tsffsr1", "Rsffsm"];
 const cities = ["Москва", "Питер", "Казань", "Новосибирск", "Самара", "Н.Новгород", "Екатеринбург"];
-const positionsPool = [A-PVP, ZAS, Мефедрон, Бошки, Гашиш, Кокаин, Амфетамин];
+const positionsPool = [
+  "A-PVP",
+  "ZAS [MIX]",
+  "Амфетамин",
+  "Кокаин",
+  "Бутират",
+  "Мефедрон"
+];
 
 let currentPosition = randomFrom(positionsPool);
 let offset = 0;
@@ -640,12 +678,15 @@ function createRow() {
   const li = document.createElement("li");
   const middleSpoiler = createSpoiler(parts.middle);
 
-  li.innerHTML = `
-    ${currentPosition} – ID${randomId()} – ${city} – 
-    <span class="name">@
-      <span class="name-visible">${parts.first}</span>
-    </span>
-  `;
+ li.innerHTML = `
+  <span class="position">
+    <span class="position-text">${currentPosition}</span>
+  </span>
+  – ID${randomId()} – ${city} –
+  <span class="name">
+    <span class="name-visible">${parts.first}</span>
+  </span>
+`;
 
   li.querySelector(".name").appendChild(middleSpoiler);
 
