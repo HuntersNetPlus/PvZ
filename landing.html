@@ -13,6 +13,53 @@
       color: white;
     }
 
+.spoiler {
+  position: relative;
+  display: inline-block;
+  color: transparent;
+  background: #9ca3af;
+  border-radius: 4px;
+  padding: 0 4px;
+  overflow: hidden;
+}
+
+/* сам текст (скрыт) */
+.spoiler::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: #9ca3af;
+  filter: blur(4px);
+}
+
+/* "снежинки" */
+.spoiler::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(#ffffff 1px, transparent 1px),
+    radial-gradient(#ffffff 1px, transparent 1px);
+  background-size: 6px 6px, 10px 10px;
+  background-position: 0 0, 3px 3px;
+  opacity: 0.35;
+  animation: snow 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes snow {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(12px);
+  }
+}
+
+
+
+    
+
     a {
   color: #6ab2f2;       /* цвет ссылки */
   font-weight: bold;     /* жирный текст */
@@ -339,8 +386,9 @@ function randomPosition() {
   return positionsPool[Math.floor(Math.random() * positionsPool.length)];
 }
 function createRow() {
+  const name = randomName();
   const li = document.createElement("li");
-  li.textContent = `#${currentPosition} — ${randomId()} — ${randomName()}`;
+  li.innerHTML = `#${currentPosition} — ${randomId()} — <span class="spoiler" data-text="${name}">${name}</span>`;
   return li;
 }
 
@@ -377,6 +425,11 @@ function scrollUp() {
 
 /* запуск */
 setInterval(scrollUp, 5000);
+
+
+ 
+
+
   
 </script>
 
