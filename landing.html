@@ -180,7 +180,35 @@
       font-size: 15px;
       line-height: 1.4;
     }
+.city {
+  position: relative;
+  max-width: 6ch;        /* ≈ 6 символов */
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: middle;
+}
 
+.city-text {
+  color: #6ab2f2;        /* цвет города */
+}
+
+/* fade-out маска */
+.city::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1.6ch;
+  height: 100%;
+  pointer-events: none;
+
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,0),
+    #1d2b3a   /* фон строки */
+  );
+}
 
 .faq-content2 { /* ← Зеленый */
       background: #1d3a22;
@@ -797,7 +825,11 @@ function createRow() {
   <span class="position">
     <span class="position-text">${getNextPosition()}</span>
   </span>
-  – ID${randomId()} – ${city} – @
+  – ID${randomId()} –
+  <span class="city">
+    <span class="city-text">${city}</span>
+  </span>
+  – @
   <span class="name">
     <span class="name-visible">${parts.first}</span>
   </span>
