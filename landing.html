@@ -560,7 +560,7 @@
   </div>
    
 <button class="share-btn" id="shareBtn">
-  <span class="btn-text">Сгенерировать ссылку</span>
+  <span class="btn-text">Сгенерировать ссылку на скидку</span>
   <span class="progress-bar"></span>
 </button>
 
@@ -749,7 +749,7 @@ shareBtn.addEventListener("click", async () => {
     setTimeout(() => {
       shareBtn.classList.remove("loading");
       shareBtn.classList.add("active");
-      btnText.textContent = "Поделиться ссылкой";
+      btnText.textContent = "Поделиться ссылкой [скидка до 80%]";
       progressBar.style.opacity = "0";
       state = "active";
     }, 1000);
