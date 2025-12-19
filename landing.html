@@ -26,58 +26,48 @@
   position: relative;
   display: inline-block;
   padding: 0 4px;
-  margin: 0 1px;
-  border-radius: 4px;
   background: #9ca3af;
   color: transparent;
+  border-radius: 4px;
   overflow: hidden;
-  min-width: 12px;
 }
 
-/* размазанный скрытый текст */
 .spoiler::before {
   content: attr(data-text);
   position: absolute;
   inset: 0;
   color: #9ca3af;
   filter: blur(4px);
-  opacity: 0.9;
 }
 
-/* снежинки внутри */
-.spoiler::after {
-  content: "";
+.snowflake {
   position: absolute;
-  inset: 0;
-  pointer-events: none;
-
-  background-image:
-    radial-gradient(#fff 1px, transparent 1px),
-    radial-gradient(#fff 1px, transparent 1px),
-    radial-gradient(#fff 1px, transparent 1px);
-
-  background-size:
-    6px 6px,
-    10px 10px,
-    14px 14px;
-
-  background-position:
-    20% 30%,
-    60% 50%,
-    80% 20%;
-
-  opacity: 0.45;
-  animation: particlesBounce 3.8s linear infinite;
+  width: 2px;
+  height: 2px;
+  background: #fff;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  opacity: 0.6;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
 }
 
-@keyframes particlesBounce {
-  0%   { transform: translate(0, 0); }
-  20%  { transform: translate(3px, 4px); }
-  40%  { transform: translate(6px, 1px); }
-  60%  { transform: translate(-2px, 5px); }
-  80%  { transform: translate(-5px, 2px); }
-  100% { transform: translate(0, 0); }
-}
+/* каждая снежинка получает случайную анимацию */
+.snowflake:nth-child(1) { animation-name: snow1; animation-duration: 3.2s; }
+.snowflake:nth-child(2) { animation-name: snow2; animation-duration: 3.8s; }
+.snowflake:nth-child(3) { animation-name: snow3; animation-duration: 4.1s; }
+.snowflake:nth-child(4) { animation-name: snow4; animation-duration: 3.5s; }
+.snowflake:nth-child(5) { animation-name: snow5; animation-duration: 4s; }
+.snowflake:nth-child(6) { animation-name: snow6; animation-duration: 3.6s; }
+
+@keyframes snow1 { 0%{transform:translate(0,0);} 25%{transform:translate(2px,4px);}50%{transform:translate(-1px,8px);}75%{transform:translate(3px,12px);}100%{transform:translate(0,0);} }
+@keyframes snow2 { 0%{transform:translate(0,0);} 25%{transform:translate(-2px,3px);}50%{transform:translate(1px,7px);}75%{transform:translate(-3px,10px);}100%{transform:translate(0,0);} }
+@keyframes snow3 { 0%{transform:translate(0,0);} 25%{transform:translate(1px,5px);}50%{transform:translate(-2px,9px);}75%{transform:translate(2px,11px);}100%{transform:translate(0,0);} }
+@keyframes snow4 { 0%{transform:translate(0,0);} 25%{transform:translate(-1px,4px);}50%{transform:translate(2px,8px);}75%{transform:translate(-2px,12px);}100%{transform:translate(0,0);} }
+@keyframes snow5 { 0%{transform:translate(0,0);} 25%{transform:translate(3px,3px);}50%{transform:translate(-3px,6px);}75%{transform:translate(1px,9px);}100%{transform:translate(0,0);} }
+@keyframes snow6 { 0%{transform:translate(0,0);} 25%{transform:translate(-3px,5px);}50%{transform:translate(2px,10px);}75%{transform:translate(-1px,12px);}100%{transform:translate(0,0);} }
+
 
 
 
@@ -338,7 +328,7 @@
 
   <div class="faq-block">
         <div class="faq-content2">
-      У нас есть бонусная программа! Заходи в бота, копируй реферальную ссылку и приглашай друзей. Друг получит скидку на первый заказ, а ты получишь до 80% от суммы заказов приглашённых! 
+      У нас есть бонусная программа! Заходи в бота, копируй реферальную ссылку и приглашай друзей. Друг получит скидку на первый заказ, а ты получишь до 80% от суммы заказов приглашённых тобой друзей! 
     </div>
   </div>
 
@@ -346,7 +336,7 @@
   
   <div class="faq-block">
      <div class="faq-header">
-    <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Shopping%20Bags.webp?raw=true">
+    <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Money%20Bag.webp?raw=true">
     <div class="faq-title">Какие гарантии безопасности и возврата?</div>
   </div>
     <div class="faq-content">
@@ -397,18 +387,9 @@ function randomId() {
 
 function splitName(name) {
   if (name.length <= 2) {
-    return {
-      first: name[0],
-      middle: "•",
-      last: ""
-    };
+    return { first: name[0], middle: "•", last: "" };
   }
-
-  return {
-    first: name[0],
-    middle: name.slice(1, -1),
-    last: name[name.length - 1]
-  };
+  return { first: name[0], middle: name.slice(1, -1), last: name[name.length - 1] };
 }
 
 function createRow() {
@@ -417,17 +398,40 @@ function createRow() {
   const parts = splitName(name);
 
   const li = document.createElement("li");
+
+  const middleSpoiler = createSpoiler(parts.middle);
+
   li.innerHTML = `
-    ${currentPosition} – ID${randomId()} – ${city} –
+    ${currentPosition} – ID${randomId()} – ${city} – 
     <span class="name">
       <span class="name-visible">${parts.first}</span>
-      <span class="spoiler" data-text="${parts.middle}">${parts.middle}</span>
-      <span class="name-visible">${parts.last}</span>
     </span>
   `;
+  li.querySelector(".name").appendChild(middleSpoiler);
+  const last = document.createElement("span");
+  last.className = "name-visible";
+  last.textContent = parts.last;
+  li.querySelector(".name").appendChild(last);
+
   return li;
 }
 
+
+
+  function createSpoiler(content) {
+  const span = document.createElement("span");
+  span.className = "spoiler";
+  span.dataset.text = content;
+
+  // создаём 6 "снежинок" внутри
+  for (let i = 0; i < 6; i++) {
+    const dot = document.createElement("span");
+    dot.className = "snowflake";
+    span.appendChild(dot);
+  }
+
+  return span;
+}
 
 
 
