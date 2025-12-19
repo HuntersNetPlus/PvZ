@@ -250,6 +250,33 @@
   cursor: pointer;
 }
 
+    .share-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 16px;
+
+  background: #3a3a3a;
+  color: #aaa;
+
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition:
+    background-color 1s ease,
+    color 0.6s ease,
+    transform 0.4s ease;
+}
+
+/* активное состояние */
+.share-btn.active {
+  background: #22c55e; /* зелёный */
+  color: #000;
+}
+
 .overlay {
   position: fixed;
   top: 0;
@@ -313,7 +340,7 @@
  <div class="faq-block">
   <div class="faq-header">
       <div class="faq-content">
-   Вот наша статистика в реальном времени, можем похвастаться!
+   Вот наша статистика в реальном времени!
   </div>
 </div>
    <br>
@@ -329,6 +356,9 @@
       У нас есть бонусная программа! Заходи в бота, копируй реферальную ссылку и приглашай друзей. Друг получит скидку на первый заказ, а ты получишь до 80% от суммы заказов приглашённых тобой друзей! 
     </div>
   </div>
+   <button class="share-btn" id="shareBtn">
+  Загрузка...
+</button>
 
 
   
@@ -474,7 +504,27 @@ function scrollUp() {
 setInterval(scrollUp, 6000);
  
 
+const shareBtn = document.getElementById("shareBtn");
+let shareActivated = false;
 
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !shareActivated) {
+      shareActivated = true;
+
+      // запускаем анимацию
+      shareBtn.classList.add("active");
+
+      setTimeout(() => {
+        shareBtn.textContent = "Поделиться ссылкой";
+      }, 400);
+    }
+  });
+}, {
+  threshold: 0.6
+});
+
+observer.observe(shareBtn);
  
 
 
