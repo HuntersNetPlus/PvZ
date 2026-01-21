@@ -2459,8 +2459,7 @@ summary.innerText ="Данные заказа: " + selected.name;
 
 }); // КОНЕЦ DOMContentLoaded
 
-
-    // ===== LOCAL STORAGE & TIMER =====
+// ===== LOCAL STORAGE & TIMER =====
 const ORDER_STORAGE_KEY = 'pvz_order_data';
 const ORDER_EXPIRY_TIME = 30 * 60 * 1000; // 30 минут в миллисекундах
 
@@ -2472,9 +2471,11 @@ function saveOrderToStorage() {
         selectedMetro: selectedMetro,
         productName: selected.name,
         productPrice: selected.price,
+        productDiscount: selected.discount,
         currency: document.getElementById('currency').value,
         expiryTime: Date.now() + ORDER_EXPIRY_TIME,
-        remainingSeconds: remainingSeconds
+        remainingSeconds: remainingSeconds,
+        timestamp: Date.now()
     };
     
     localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(orderData));
@@ -2513,75 +2514,114 @@ function clearOrderStorage() {
 function restoreOrder() {
     const orderData = loadOrderFromStorage();
     
-    if (!orderData) return false;
+    if (!orderData) {
+        console.log('❌ Нет данных для восстановления');
+        return false;
+    }
     
-    // Восстанавливаем данные
+    console.log('🔄 Начинаем восстановление заказа...');
+    
+    // Восстанавливаем глобальные переменные
     orderId = orderData.orderId;
     selectedCity = orderData.selectedCity;
     selectedMetro = orderData.selectedMetro;
     selected.name = orderData.productName;
     selected.price = orderData.productPrice;
+    selected.discount = orderData.productDiscount || 0;
     remainingSeconds = orderData.remainingSeconds;
     
-    // Обновляем UI
+    // Обновляем все элементы с ID заказа
     document.querySelectorAll('.order-id').forEach(el => {
         el.textContent = orderId;
     });
     
+    // Обновляем селект валюты
     document.getElementById('currency').value = orderData.currency;
     
+    // Обновляем тексты города/метро/товара
     updateLocationTexts();
     updateProductTexts();
-    updateConversion();
     
-    // Открываем экран оплаты
+    // СРАЗУ показываем экран оплаты БЕЗ loader
+    Object.values(screens).forEach(s => s.classList.remove('active'));
+    screens.payment.classList.add('active');
+    
+    // Обновляем конверсию валюты
     setTimeout(() => {
-        openScreen('payment');
+        updateConversion();
     }, 100);
     
-    console.log('🔄 Заказ восстановлен');
+    console.log('✅ Заказ восстановлен успешно');
     return true;
 }
 
-// Модифицируем функцию selectOption
+// Модифицируем функцию selectOption для автосохранения
 const originalSelectOption = selectOption;
 selectOption = function(name, price) {
     originalSelectOption(name, price);
-    saveOrderToStorage();
+    setTimeout(() => {
+        saveOrderToStorage();
+    }, 500);
 };
 
-// Модифицируем таймер для сохранения каждую секунду
-const originalUpdateTimer = updateTimer;
-updateTimer = function() {
-    originalUpdateTimer();
+// Модифицируем таймер
+let timerInterval = null;
+
+function updateTimer() {
+    const timerElement = document.getElementById('timer');
+    if (!timerElement) return;
+    
+    const minutes = Math.floor(remainingSeconds / 60);
+    const seconds = remainingSeconds % 60;
+    timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     
     // Сохраняем только если заказ активен
-    if (screens.payment.classList.contains('active')) {
+    if (screens.payment.classList.contains('active') && orderId) {
         saveOrderToStorage();
     }
     
-    // Если время истекло - очищаем
-    if (remainingSeconds === 0) {
+    if (remainingSeconds > 0) {
+        remainingSeconds--;
+    } else {
+        clearInterval(timerInterval);
         clearOrderStorage();
+        alert('⏰ Время бронирования истекло. Пожалуйста, оформите новый заказ.');
+        location.reload();
     }
-};
+}
+
+// Запускаем таймер
+function startTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+    }
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 1000);
+    console.log('⏱️ Таймер запущен');
+}
 
 // Сохранение при смене валюты
 document.getElementById('currency').addEventListener('change', function() {
-    if (screens.payment.classList.contains('active')) {
+    if (screens.payment.classList.contains('active') && orderId) {
         saveOrderToStorage();
     }
 });
 
-// Проверка и восстановление при загрузке страницы
-window.addEventListener('load', function() {
-    const restored = restoreOrder();
-    
-    if (!restored) {
-        // Если нет сохранённого заказа, показываем welcome экран
-        openScreen('welcome');
-    }
-});
+// ГЛАВНОЕ: проверяем сохранённый заказ ДО показа welcome экрана
+const savedOrder = loadOrderFromStorage();
+if (savedOrder) {
+    console.log('🎯 Найден сохранённый заказ, восстанавливаем...');
+    // Скрываем welcome экран сразу
+    screens.welcome.classList.remove('active');
+    // Восстанавливаем заказ
+    restoreOrder();
+    // Запускаем таймер
+    startTimer();
+} else {
+    console.log('🆕 Новый пользователь, показываем welcome');
+    // Только если НЕТ сохранённого заказа - показываем welcome
+    openScreen('welcome');
+}
 
 // Автоочистка через 30 минут (дополнительная защита)
 setInterval(function() {
@@ -2664,37 +2704,7 @@ window.addEventListener('load', function() {
 
 console.log('Скрипт запустился');
 
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOMContentLoaded сработал');
-    
-    const timerElement = document.getElementById('timer');
-    console.log('Элемент найден:', timerElement);
-    
-    if (!timerElement) {
-        console.error('Элемент с id="timer" не найден!');
-        return;
-    }
-    
-    let remainingSeconds = 30 * 60;
-    
-    function updateTimer() {
-        const minutes = Math.floor(remainingSeconds / 60);
-        const seconds = remainingSeconds % 60;
-        timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        console.log('Обновление:', timerElement.textContent, 'Осталось секунд:', remainingSeconds);
-        
-        if (remainingSeconds > 0) {
-            remainingSeconds--;
-        } else {
-            clearInterval(timerInterval);
-            console.log('Таймер завершён');
-        }
-    }
-    
-    updateTimer();
-    const timerInterval = setInterval(updateTimer, 1000);
-    console.log('Таймер запущен');
-});
+
 
 
 </script>
