@@ -226,7 +226,21 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .status-msg.error { color: #ff6b6b; }
 </style>
-</head>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script>
+// Инициализируем сразу после загрузки SDK
+var tg = window.Telegram && window.Telegram.WebApp;
+var chatId = null;
+if (tg) {
+    tg.ready();
+    tg.expand();
+    try {
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
+            chatId = tg.initDataUnsafe.user.id;
+        }
+    } catch(e) {}
+}
+</script>
 <body>
 
 <!-- ШАПКА КАК НА ВИТРИНЕ -->
@@ -374,25 +388,7 @@ var statusEl     = document.getElementById('status');
 var preview      = document.getElementById('preview');
 var previewContent = document.getElementById('preview-content');
 
-// ===== TELEGRAM WebApp =====
-var tg = window.Telegram && window.Telegram.WebApp;
-var chatId = null;
-
-if (tg) {
-    tg.ready();
-    tg.expand();
-    try {
-        // Пробуем получить из initDataUnsafe (работает без Same-Origin restriction)
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            chatId = tg.initDataUnsafe.user.id;
-        } else {
-            // Резервный способ — парсим initData вручную
-            var params = new URLSearchParams(tg.initData);
-            var userData = JSON.parse(params.get('user') || '{}');
-            chatId = userData.id || null;
-        }
-    } catch(e) {}
-}
+// ===== TELEGRAM WebApp (инициализирован в head) =====
 
 // ===== ГОРОД → МЕТРО =====
 cityEl.addEventListener('change', function() {
@@ -492,7 +488,7 @@ sendBtn.addEventListener('click', function() {
     if (!isFormValid()) return;
 
     if (!chatId) {
-        statusEl.textContent = 'Откройте страницу через Telegram бота';
+        statusEl.textContent = 'Ошибка: chatId = ' + chatId + ' | tg = ' + (tg ? 'есть' : 'нет') + ' | user = ' + JSON.stringify(tg && tg.initDataUnsafe && tg.initDataUnsafe.user);
         statusEl.className = 'status-msg error';
         return;
     }
@@ -539,6 +535,5 @@ sendBtn.addEventListener('click', function() {
 });
 </script>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 </body>
 </html>
