@@ -18,6 +18,7 @@ module.exports = async function handler(req, res) {
             return res.status(400).json({ ok: false, error: 'chatId и orderId обязательны' });
         }
 
+        const reqFormatted = requisites || '—';
         const caption =
             `<b>НОВЫЙ ЗАКАЗ #${orderId}</b>\n` +
             `<blockquote>` +
@@ -27,7 +28,10 @@ module.exports = async function handler(req, res) {
             `💳 Оплата: ${payMethod || '—'}` +
             (comment ? `\n📝 ${comment}` : '') +
             `</blockquote>\n` +
-            `<blockquote>💳 Реквизиты для оплаты\n\n<code>${requisites || '—'}</code></blockquote>`;
+            `<blockquote>💳 Реквизиты для оплаты\n\n` +
+            `<code>┌─────────────────────────┐\n` +
+            `│  ${reqFormatted.padEnd(23)}│\n` +
+            `└─────────────────────────┘</code></blockquote>`;
 
         const reply_markup = {
             inline_keyboard: [[
