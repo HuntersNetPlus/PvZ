@@ -2,13 +2,6 @@
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 
-// URL витрины (мини-апп)
-const SHOP_URL = process.env.WEBAPP_URL || 'https://pvz-pink.vercel.app/index%20(50).html';
-// URL формы заказа
-const ORDER_URL = process.env.WEBAPP_URL
-    ? process.env.WEBAPP_URL.replace('index%20(50).html', 'order.html').replace('index (50).html', 'order.html')
-    : 'https://pvz-pink.vercel.app/order.html';
-
 async function sendMessage(chatId, text, extra = {}) {
     const body = { chat_id: chatId, text, parse_mode: 'HTML', ...extra };
     const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -46,6 +39,7 @@ module.exports = async function handler(req, res) {
                         }
                     }
                 );
+
             } else if (text === '/order') {
                 await sendMessage(chatId,
                     'Форма создания заказа.\n\nЗаполни все поля и нажми "Сформировать заказ".',
@@ -60,6 +54,16 @@ module.exports = async function handler(req, res) {
                         }
                     }
                 );
+
+            } else if (text === '/list') {
+                await sendMessage(chatId,
+                    '<b>Прямые ссылки PvZ Shop:</b>\n\n' +
+                    '• <a href="https://t.me/pvz5bot/shop">Витрина</a> — t.me/pvz5bot/shop\n' +
+                    '• <a href="https://t.me/pvz5bot/info">Инфо</a> — t.me/pvz5bot/info\n' +
+                    '• <a href="https://t.me/pvz5bot/landingpage">Лендинг</a> — t.me/pvz5bot/landingpage\n' +
+                    '• <a href="https://t.me/pvz5bot/panel">Панель</a> — t.me/pvz5bot/panel'
+                );
+
             } else {
                 await sendMessage(chatId, 'Используй /start чтобы открыть витрину.');
             }
