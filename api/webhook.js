@@ -36,7 +36,7 @@ async function sendOrderButton(chatId) {
     return res.json();
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     // Только POST запросы от Telegram
     if (req.method !== 'POST') {
         return res.status(200).json({ ok: true, info: 'Bot is running' });

@@ -3,7 +3,7 @@
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     // Разрешаем CORS для GitHub Pages и Vercel
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
