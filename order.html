@@ -15,31 +15,68 @@ body {
     padding: 20px;
 }
 
-h2 {
-    color: #6ab2f2;
+/* Шапка как на витрине */
+.shop-header {
     text-align: center;
     margin-bottom: 20px;
-    font-size: 18px;
+}
+
+.shop-header img {
+    width: 160px;
+    display: block;
+    margin: 0 auto 10px;
+}
+
+.shop-header .title {
+    color: #6ab2f2;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.shop-header .subtitle {
+    color: white;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+/* Секции */
+.section {
+    background: #253648;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+}
+
+.section-label {
+    color: #6ab2f2;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
 }
 
 .form-group {
-    margin-bottom: 14px;
+    margin-bottom: 10px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
 }
 
 label {
     display: block;
     color: #6ab2f2;
-    font-size: 13px;
+    font-size: 12px;
     margin-bottom: 5px;
 }
 
 input, select, textarea {
     width: 100%;
-    padding: 11px 12px;
+    padding: 10px 12px;
     font-size: 14px;
     border-radius: 6px;
     border: 1px solid #3a5068;
-    background: #1d2b3a;
+    background: #17212b;
     color: white;
     outline: none;
     transition: border-color 0.2s;
@@ -58,18 +95,19 @@ select {
     padding-right: 36px;
 }
 
-select option {
-    background: #17212b;
-}
+select option { background: #17212b; }
 
-select:disabled {
-    opacity: 0.45;
-}
+select:disabled { opacity: 0.45; }
 
 textarea {
     resize: none;
-    height: 70px;
+    height: 65px;
     font-size: 13px;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    opacity: 0.4;
 }
 
 .row2 {
@@ -78,223 +116,227 @@ textarea {
     gap: 10px;
 }
 
+/* Чекбокс доставки */
 .delivery-toggle {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 14px;
     cursor: pointer;
     user-select: none;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #3a5068;
+    background: #17212b;
+    transition: border-color 0.2s;
 }
 
+.delivery-toggle:hover { border-color: #6ab2f2; }
+
 .delivery-toggle input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     cursor: pointer;
     accent-color: #6ab2f2;
     flex-shrink: 0;
+    background: transparent;
+    border: none;
+    padding: 0;
 }
 
 .delivery-toggle span {
-    font-size: 14px;
+    font-size: 13px;
     color: #aad4f5;
 }
 
 #address-block {
     display: none;
-    margin-bottom: 14px;
+    margin-top: 10px;
 }
 
-.divider {
-    border: none;
-    border-top: 1px solid #2a3f52;
-    margin: 18px 0;
+/* Превью */
+.preview-box {
+    background: #1d2b3a;
+    border: 1px solid #3a5068;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    display: none;
 }
 
+.preview-box.visible { display: block; }
+
+.preview-title {
+    color: #6ab2f2;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.preview-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid #243444;
+    padding: 5px 0;
+    gap: 8px;
+}
+
+.preview-row:last-child { border-bottom: none; }
+.preview-key { color: #6ab2f2; white-space: nowrap; flex-shrink: 0; }
+.preview-val { color: white; text-align: right; word-break: break-all; }
+
+.order-badge {
+    background: #2f6ea5;
+    color: white;
+    border-radius: 4px;
+    padding: 1px 8px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Кнопка */
 .submit-btn {
-    width: 100%;
+    width: 75vw;
+    margin: 4px auto 0;
     padding: 15px;
     font-size: 16px;
     font-weight: bold;
     background: #2f6ea5;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
+    display: block;
     transition: background 0.2s, transform 0.1s;
-    margin-top: 6px;
+    text-align: center;
 }
 
-.submit-btn:hover { background: #3a82c0; }
 .submit-btn:active { transform: scale(0.98); }
 .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
 .status-msg {
     text-align: center;
-    margin-top: 14px;
+    margin-top: 12px;
     font-size: 14px;
     min-height: 20px;
     color: #89ED5E;
+    padding-bottom: 20px;
 }
 
 .status-msg.error { color: #ff6b6b; }
-
-/* Превью заказа */
-.preview-box {
-    background: #1d2b3a;
-    border: 1px solid #3a5068;
-    border-radius: 10px;
-    padding: 14px;
-    margin-bottom: 14px;
-    font-size: 13px;
-    line-height: 1.7;
-    display: none;
-}
-
-.preview-box.visible { display: block; }
-
-.preview-box .row {
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px solid #243444;
-    padding: 4px 0;
-}
-
-.preview-box .row:last-child { border-bottom: none; }
-.preview-box .key { color: #6ab2f2; }
-.preview-box .val { color: white; text-align: right; max-width: 60%; word-break: break-word; }
-
-.preview-title {
-    color: #6ab2f2;
-    font-size: 12px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.order-id-badge {
-    background: #2f6ea5;
-    color: white;
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 12px;
-    font-weight: bold;
-}
 </style>
 </head>
 <body>
 
-<h2>📦 Создать заказ</h2>
-
-<!-- ГОРОД И МЕТРО -->
-<div class="form-group">
-    <label>Город</label>
-    <select id="city">
-        <option value="">Выберите город</option>
-        <option value="moscow">Москва</option>
-        <option value="spb">Санкт-Петербург</option>
-        <option value="kazan">Казань</option>
-        <option value="novgorod">Нижний Новгород</option>
-        <option value="samara">Самара</option>
-        <option value="novosib">Новосибирск</option>
-        <option value="ekb">Екатеринбург</option>
-    </select>
+<!-- ШАПКА КАК НА ВИТРИНЕ -->
+<div class="shop-header">
+    <img src="https://github.com/HuntersNetPlus/PvZ/blob/main/Gemini_Generated_Image_qobu9jqobu9jqobu%20(1).webp?raw=true" alt="">
+    <div class="title">Создать заказ</div>
+    <div class="subtitle">Быстро, анонимно и круглосуточно.</div>
 </div>
 
-<div class="form-group">
-    <label>Станция метро</label>
-    <select id="metro" disabled>
-        <option value="">Сначала выберите город</option>
-    </select>
-</div>
+<!-- ЛОКАЦИЯ -->
+<div class="section">
+    <div class="section-label">Локация</div>
 
-<!-- АДРЕСНАЯ ДОСТАВКА -->
-<label class="delivery-toggle">
-    <input type="checkbox" id="delivery-check">
-    <span>📍 Адресная доставка (вместо метро)</span>
-</label>
-
-<div id="address-block">
     <div class="form-group">
-        <label>Адрес доставки</label>
-        <input type="text" id="address-input" placeholder="Улица, дом, квартира...">
+        <label>Город</label>
+        <select id="city">
+            <option value="">Выберите город</option>
+            <option value="moscow">Москва</option>
+            <option value="spb">Санкт-Петербург</option>
+            <option value="kazan">Казань</option>
+            <option value="novgorod">Нижний Новгород</option>
+            <option value="samara">Самара</option>
+            <option value="novosib">Новосибирск</option>
+            <option value="ekb">Екатеринбург</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Станция метро</label>
+        <select id="metro" disabled>
+            <option value="">Сначала выберите город</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label class="delivery-toggle" for="delivery-check">
+            <input type="checkbox" id="delivery-check">
+            <span>Адресная доставка</span>
+        </label>
+        <div id="address-block">
+            <label style="margin-top:0; margin-bottom:5px;">Адрес</label>
+            <input type="text" id="address-input" placeholder="Улица, дом, квартира...">
+        </div>
     </div>
 </div>
-
-<hr class="divider">
 
 <!-- ТОВАР -->
-<div class="row2">
-    <div class="form-group">
-        <label>Вещество</label>
-        <select id="substance">
-            <option value="">Выберите</option>
-            <option>ZAS</option>
-            <option>Экстази</option>
-            <option>Бутират GHB</option>
-            <option>Крек</option>
-            <option>Xanax</option>
-            <option>Лирика</option>
-            <option>Мефедрон</option>
-            <option>Мефедрон (мука)</option>
-            <option>Кокаин</option>
-            <option>A-PVP</option>
-            <option>Гашиш Ice-o-Lator</option>
-            <option>Гашиш Mercedes Benz</option>
-            <option>Бошки Amnesia Haze</option>
-            <option>Бошки Critical Kush</option>
-            <option>Бошки Gorilla Kush</option>
-            <option>Бошки White Widow</option>
-            <option>Амфетамин</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label>Количество</label>
-        <select id="amount">
-            <option value="">—</option>
-            <option>1 гр</option>
-            <option>2 гр</option>
-            <option>3 гр</option>
-            <option>4 гр</option>
-            <option>5 гр</option>
-            <option>10 гр</option>
-            <option>150 мл</option>
-        </select>
+<div class="section">
+    <div class="section-label">Позиция</div>
+    <div class="row2">
+        <div class="form-group">
+            <label>Вещество</label>
+            <select id="substance">
+                <option value="">Выберите</option>
+                <option>ZAS</option>
+                <option>Экстази</option>
+                <option>Бутират GHB</option>
+                <option>Крек</option>
+                <option>Xanax</option>
+                <option>Лирика</option>
+                <option>Мефедрон</option>
+                <option>Мефедрон (мука)</option>
+                <option>Кокаин</option>
+                <option>A-PVP</option>
+                <option>Гашиш Ice-o-Lator</option>
+                <option>Гашиш Mercedes Benz</option>
+                <option>Бошки Amnesia Haze</option>
+                <option>Бошки Critical Kush</option>
+                <option>Бошки Gorilla Kush</option>
+                <option>Бошки White Widow</option>
+                <option>Амфетамин</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Количество (гр / мл)</label>
+            <input type="text" id="amount" placeholder="напр. 2 гр">
+        </div>
     </div>
 </div>
-
-<hr class="divider">
 
 <!-- ОПЛАТА -->
-<div class="row2">
-    <div class="form-group">
-        <label>Сумма (₽)</label>
-        <input type="number" id="price-rub" placeholder="5 220" min="0">
+<div class="section">
+    <div class="section-label">Оплата</div>
+    <div class="row2">
+        <div class="form-group">
+            <label>Сумма (руб)</label>
+            <input type="number" id="price-rub" placeholder="5220" min="0">
+        </div>
+        <div class="form-group">
+            <label>Способ</label>
+            <select id="pay-method">
+                <option value="СБП / Карта">СБП / Карта</option>
+                <option value="USDT TRC-20">USDT TRC-20</option>
+                <option value="USDT ERC-20">USDT ERC-20</option>
+                <option value="BTC">BTC</option>
+                <option value="ETH">ETH</option>
+                <option value="LTC">LTC</option>
+            </select>
+        </div>
     </div>
     <div class="form-group">
-        <label>Способ оплаты</label>
-        <select id="pay-method">
-            <option value="СБП / Карта">СБП / Карта</option>
-            <option value="USDT TRC-20">USDT TRC-20</option>
-            <option value="USDT ERC-20">USDT ERC-20</option>
-            <option value="BTC">BTC</option>
-            <option value="ETH">ETH</option>
-            <option value="LTC">LTC</option>
-        </select>
+        <label>Реквизиты</label>
+        <input type="text" id="requisites" placeholder="Номер карты / адрес кошелька">
+    </div>
+    <div class="form-group">
+        <label>Комментарий (необязательно)</label>
+        <textarea id="comment" placeholder="Дополнительная информация..."></textarea>
     </div>
 </div>
-
-<div class="form-group">
-    <label>Реквизиты для оплаты</label>
-    <input type="text" id="requisites" placeholder="Номер карты / адрес кошелька...">
-</div>
-
-<div class="form-group">
-    <label>Комментарий к заказу (необязательно)</label>
-    <textarea id="comment" placeholder="Дополнительная информация..."></textarea>
-</div>
-
-<hr class="divider">
 
 <!-- ПРЕВЬЮ -->
 <div class="preview-box" id="preview">
@@ -302,14 +344,10 @@ textarea {
     <div id="preview-content"></div>
 </div>
 
-<button class="submit-btn" id="send-btn" disabled>Сформировать заказ →</button>
+<button class="submit-btn" id="send-btn" disabled>Сформировать заказ</button>
 <div class="status-msg" id="status"></div>
 
 <script>
-// ===== КОНФИГ =====
-// Замени на свой токен бота
-var BOT_TOKEN = '8310073611:AAEWpX-EtEE9qit7DOOzWRzt5TH6iTdqyjw';
-
 // ===== ДАННЫЕ МЕТРО =====
 var metroData = {
     moscow: ["Александровский сад","Алексеевская","Альма-Атинская","Аминьевская","Аннино","Аэропорт","Автозаводская","Бабушкинская","Багратионовская","Баррикадная","Бауманская","Беговая","Беломорская","Белорусская","Беляево","Бибирево","Библиотека имени Ленина","Битцевский парк","Борисово","Ботанический сад","Братиславская","Бульвар Дмитрия Донского","Бульвар Рокоссовского","Бунинская аллея","Бутырская","ВДНХ","Верхние Лихоборы","Владыкино","Водный стадион","Войковская","Волгоградский проспект","Волжская","Волоколамская","Воробьёвы горы","Воронцовская","Выставочная","Выхино","Динамо","Дмитровская","Добрынинская","Домодедовская","Достоевская","Жулебино","Зябликово","Измайловская","Калужская","Кантемировская","Каширская","Киевская","Китай-город","Кожуховская","Коломенская","Коммунарка","Коньково","Котельники","Красногвардейская","Краснопресненская","Красносельская","Красные Ворота","Кропоткинская","Крылатское","Кузнецкий Мост","Кузьминки","Кунцевская","Курская","Кутузовская","Ленинский проспект","Лермонтовский проспект","Лесопарковая","Лефортово","Лихоборы","Ломоносовский проспект","Лубянка","Лужники","Люблино","Марина Роща","Марксистская","Марьино","Маяковская","Медведково","Международная","Менделеевская","Минская","Молодёжная","Нагатинская","Нагорная","Нахимовский проспект","Некрасовка","Нижегородская","Новогиреево","Новокосино","Новокузнецкая","Новопеределкино","Новослободская","Новые Черёмушки","Окружная","Охотный Ряд","Павелецкая","Панфиловская","Парк Победы","Парк культуры","Партизанская","Петровский парк","Печатники","Пионерская","Планерная","Площадь Гагарина","Площадь Ильича","Площадь Революции","Полежаевская","Полянка","Пражская","Прокшино","Проспект Вернадского","Проспект Мира","Профсоюзная","Пушкинская","Раменки","Рассказовка","Рижская","Римская","Румянцево","Савёловская","Саларьево","Свиблово","Севастопольская","Селигерская","Семеновская","Серпуховская","Славянский бульвар","Смоленская","Сокольники","Солнцево","Спортивная","Сретенский бульвар","Строгино","Студенческая","Суворовская","Сухаревская","Сходненская","Таганская","Текстильщики","Тёплый Стан","Технопарк","Тимирязевская","Третьяковская","Тропарёво","Трубная","Тульская","Тургеневская","Тушинская","Угрешская","Улица 1905 года","Университет","Фили","Фонвизинская","Хорошёвская","Ховрино","Царицыно","Цветной бульвар","ЦСКА","Черкизовская","Чертановская","Чеховская","Чистые пруды","Чкаловская","Шаболовская","Шелепиха","Шипиловская","Щёлковская","Щукинская","Электрозаводская","Юго-Западная","Южная","Якиманка","Ясенево"],
@@ -327,20 +365,20 @@ var cityNames = {
 };
 
 // ===== ЭЛЕМЕНТЫ =====
-var cityEl = document.getElementById('city');
-var metroEl = document.getElementById('metro');
-var deliveryCheck = document.getElementById('delivery-check');
+var cityEl       = document.getElementById('city');
+var metroEl      = document.getElementById('metro');
+var deliveryCh   = document.getElementById('delivery-check');
 var addressBlock = document.getElementById('address-block');
 var addressInput = document.getElementById('address-input');
-var substanceEl = document.getElementById('substance');
-var amountEl = document.getElementById('amount');
-var priceEl = document.getElementById('price-rub');
-var payMethodEl = document.getElementById('pay-method');
-var reqEl = document.getElementById('requisites');
-var commentEl = document.getElementById('comment');
-var sendBtn = document.getElementById('send-btn');
-var statusEl = document.getElementById('status');
-var preview = document.getElementById('preview');
+var substanceEl  = document.getElementById('substance');
+var amountEl     = document.getElementById('amount');
+var priceEl      = document.getElementById('price-rub');
+var payMethodEl  = document.getElementById('pay-method');
+var reqEl        = document.getElementById('requisites');
+var commentEl    = document.getElementById('comment');
+var sendBtn      = document.getElementById('send-btn');
+var statusEl     = document.getElementById('status');
+var preview      = document.getElementById('preview');
 var previewContent = document.getElementById('preview-content');
 
 // ===== TELEGRAM WebApp =====
@@ -350,7 +388,6 @@ var chatId = null;
 if (tg) {
     tg.ready();
     tg.expand();
-    // Получаем chat_id из initData
     try {
         var params = new URLSearchParams(tg.initData);
         var userData = JSON.parse(params.get('user') || '{}');
@@ -370,8 +407,7 @@ cityEl.addEventListener('change', function() {
         metroEl.appendChild(def);
         metroData[city].forEach(function(s) {
             var opt = document.createElement('option');
-            opt.value = s;
-            opt.textContent = s;
+            opt.value = s; opt.textContent = s;
             metroEl.appendChild(opt);
         });
     } else {
@@ -385,17 +421,9 @@ cityEl.addEventListener('change', function() {
 
 metroEl.addEventListener('change', updatePreview);
 
-// ===== ДОСТАВКА =====
-deliveryCheck.addEventListener('change', function() {
-    if (this.checked) {
-        addressBlock.style.display = 'block';
-        metroEl.disabled = true;
-        metroEl.style.opacity = '0.4';
-    } else {
-        addressBlock.style.display = 'none';
-        metroEl.disabled = !cityEl.value;
-        metroEl.style.opacity = '';
-    }
+// ===== ДОСТАВКА — не скрывает метро, только показывает поле адреса =====
+deliveryCh.addEventListener('change', function() {
+    addressBlock.style.display = this.checked ? 'block' : 'none';
     updatePreview();
 });
 
@@ -410,22 +438,27 @@ addressInput.addEventListener('input', updatePreview);
 function generateOrderId() {
     return Math.floor(10000 + Math.random() * 90000);
 }
-
 var currentOrderId = generateOrderId();
 
 function getLocation() {
-    if (deliveryCheck.checked) {
-        return addressInput.value.trim() || '—';
-    }
-    var city = cityNames[cityEl.value] || '';
+    var city  = cityNames[cityEl.value] || '';
     var metro = metroEl.value || '';
-    if (!city) return '—';
-    return city + (metro ? ', ' + metro : '');
+    var addr  = deliveryCh.checked ? addressInput.value.trim() : '';
+
+    var parts = [];
+    if (city)  parts.push(city);
+    if (metro) parts.push(metro);
+    if (addr)  parts.push('Доставка: ' + addr);
+    return parts.join(', ') || '—';
 }
 
 function isFormValid() {
-    var loc = deliveryCheck.checked ? addressInput.value.trim() : (cityEl.value && metroEl.value);
-    return loc && substanceEl.value && amountEl.value && priceEl.value && reqEl.value.trim();
+    var hasCity  = !!cityEl.value;
+    var hasMetro = !!metroEl.value;
+    var hasAddr  = deliveryCh.checked ? !!addressInput.value.trim() : true;
+    return hasCity && hasMetro && hasAddr
+        && substanceEl.value && amountEl.value.trim()
+        && priceEl.value && reqEl.value.trim();
 }
 
 function updatePreview() {
@@ -435,26 +468,28 @@ function updatePreview() {
         return;
     }
 
-    var loc = getLocation();
-    var product = substanceEl.value + ' [' + amountEl.value + ']';
-    var price = Number(priceEl.value).toLocaleString('ru-RU') + ' ₽';
-    var payMethod = payMethodEl.value;
-    var req = reqEl.value.trim();
+    var loc     = getLocation();
+    var product = substanceEl.value + ' ' + amountEl.value.trim();
+    var price   = Number(priceEl.value).toLocaleString('ru-RU') + ' руб';
+    var req     = reqEl.value.trim();
     var comment = commentEl.value.trim();
 
     var rows = [
-        ['Заказ №', '<span class="order-id-badge">#' + currentOrderId + '</span>'],
+        ['Заказ', '<span class="order-badge">#' + currentOrderId + '</span>'],
         ['Локация', loc],
         ['Позиция', product],
         ['Сумма', price],
-        ['Оплата', payMethod],
+        ['Оплата', payMethodEl.value],
         ['Реквизиты', req],
     ];
     if (comment) rows.push(['Комментарий', comment]);
-    rows.push(['Статус', '⏳ Заказ ожидает оплаты']);
+    rows.push(['Статус', 'Заказ ожидает оплаты']);
 
     previewContent.innerHTML = rows.map(function(r) {
-        return '<div class="row"><span class="key">' + r[0] + '</span><span class="val">' + r[1] + '</span></div>';
+        return '<div class="preview-row">'
+            + '<span class="preview-key">' + r[0] + '</span>'
+            + '<span class="preview-val">'  + r[1] + '</span>'
+            + '</div>';
     }).join('');
 
     preview.classList.add('visible');
@@ -465,68 +500,54 @@ function updatePreview() {
 sendBtn.addEventListener('click', function() {
     if (!isFormValid()) return;
 
-    // Если не открыто через Telegram WebApp — используем резервный способ
-    if (!chatId && tg) {
-        statusEl.textContent = 'Не удалось получить ID пользователя';
+    if (!chatId) {
+        statusEl.textContent = 'Откройте страницу через Telegram бота';
         statusEl.className = 'status-msg error';
         return;
     }
 
-    var loc = getLocation();
-    var product = substanceEl.value + ' [' + amountEl.value + ']';
-    var price = Number(priceEl.value).toLocaleString('ru-RU') + ' ₽';
+    var loc     = getLocation();
+    var product = substanceEl.value + ' ' + amountEl.value.trim();
+    var price   = Number(priceEl.value).toLocaleString('ru-RU') + ' руб';
     var comment = commentEl.value.trim();
-
-    // Формируем красивое сообщение (HTML разметка для Telegram)
-    var msg = '🧾 <b>НОВЫЙ ЗАКАЗ #' + currentOrderId + '</b>\n\n'
-        + '📍 <b>Локация:</b> ' + loc + '\n'
-        + '💊 <b>Позиция:</b> ' + product + '\n'
-        + '💰 <b>Сумма:</b> ' + price + '\n'
-        + '💳 <b>Оплата:</b> ' + payMethodEl.value + '\n'
-        + '🔑 <b>Реквизиты:</b> <code>' + reqEl.value.trim() + '</code>\n'
-        + (comment ? '📝 <b>Комментарий:</b> ' + comment + '\n' : '')
-        + '\n⏰ <b>Время на оплату:</b> 30 минут'
-        + '\n\n📌 <b>Статус:</b> Заказ ожидает оплаты';
 
     sendBtn.disabled = true;
     statusEl.textContent = 'Отправка...';
     statusEl.className = 'status-msg';
 
-    // Шаг 1: отправляем картинку с подписью
-    var formData = new FormData();
-    formData.append('chat_id', chatId);
-    formData.append('photo', 'https://github.com/HuntersNetPlus/PvZ/blob/main/AV_1-ezgif.com-video-to-webp-converter.webp?raw=true');
-    formData.append('caption', msg);
-    formData.append('parse_mode', 'HTML');
-
-    fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendPhoto', {
+    fetch('/api/send', {
         method: 'POST',
-        body: formData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            chatId:     chatId,
+            orderId:    currentOrderId,
+            location:   loc,
+            product:    product,
+            price:      price,
+            payMethod:  payMethodEl.value,
+            requisites: reqEl.value.trim(),
+            comment:    comment
+        })
     })
-    .then(function(res) { return res.json(); })
+    .then(function(r) { return r.json(); })
     .then(function(data) {
         if (data.ok) {
-            statusEl.textContent = '✅ Заказ успешно отправлен!';
+            statusEl.textContent = 'Заказ успешно отправлен';
             statusEl.className = 'status-msg';
-            sendBtn.textContent = 'Заказ отправлен ✓';
-
-            // Закрываем WebApp через 2 секунды
-            setTimeout(function() {
-                if (tg) tg.close();
-            }, 2000);
+            sendBtn.textContent = 'Отправлено';
+            setTimeout(function() { if (tg) tg.close(); }, 2000);
         } else {
-            throw new Error(data.description || 'Ошибка API');
+            throw new Error(data.description || data.error || 'Ошибка API');
         }
     })
     .catch(function(err) {
-        statusEl.textContent = '❌ Ошибка: ' + err.message;
+        statusEl.textContent = 'Ошибка: ' + err.message;
         statusEl.className = 'status-msg error';
         sendBtn.disabled = false;
     });
 });
 </script>
 
-<!-- Telegram WebApp SDK -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </body>
 </html>
