@@ -26,9 +26,20 @@ module.exports = async function handler(req, res) {
             const text = msg.text || '';
 
             if (text === '/start') {
-                await sendMessage(chatId,
-                    'Добро пожаловать в PvZ Shop.\n\nБыстро, анонимно и круглосуточно.\nНажми кнопку ниже чтобы открыть витрину.',
-                    {
+                // Отправляем картинку с красивым текстом
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        photo: 'https://github.com/HuntersNetPlus/PvZ/blob/main/AV_1-ezgif.com-video-to-webp-converter.webp?raw=true',
+                        caption:
+                            `<b>Добро пожаловать в PvZ Shop</b>\n\n` +
+                            `<blockquote>Быстро, анонимно и круглосуточно.\n` +
+                            `Работаем без выходных — твой заказ всегда под рукой.</blockquote>\n\n` +
+                            `Широкий ассортимент, актуальные цены и мгновенное оформление прямо в Telegram.\n\n` +
+                            `👇`,
+                        parse_mode: 'HTML',
                         reply_markup: {
                             inline_keyboard: [[
                                 {
@@ -37,8 +48,8 @@ module.exports = async function handler(req, res) {
                                 }
                             ]]
                         }
-                    }
-                );
+                    })
+                });
 
             } else if (text === '/order') {
                 await sendMessage(chatId,
