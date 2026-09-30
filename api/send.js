@@ -26,15 +26,22 @@ module.exports = async function handler(req, res) {
 
         // Формируем текст сообщения
         const caption =
-            `🧾 <b>НОВЫЙ ЗАКАЗ #${orderId}</b>\n\n` +
-            `📍 <b>Локация:</b> ${location || '—'}\n` +
-            `💊 <b>Позиция:</b> ${product || '—'}\n` +
-            `💰 <b>Сумма:</b> ${price || '—'}\n` +
-            `💳 <b>Оплата:</b> ${payMethod || '—'}\n` +
-            `🔑 <b>Реквизиты:</b> <code>${requisites || '—'}</code>\n` +
-            (comment ? `📝 <b>Комментарий:</b> ${comment}\n` : '') +
-            `\n⏰ <b>Время на оплату:</b> 30 минут` +
-            `\n\n📌 <b>Статус:</b> Заказ ожидает оплаты`;
+            `<b>НОВЫЙ ЗАКАЗ #${orderId}</b>\n` +
+            `<blockquote>` +
+            `📍 Локация: ${location || '—'}\n` +
+            `💊 Позиция: ${product || '—'}\n` +
+            `💰 Сумма: ${price || '—'}\n` +
+            `💳 Оплата: ${payMethod || '—'}` +
+            (comment ? `\n📝 ${comment}` : '') +
+            `</blockquote>\n` +
+            `Реквизиты:\n<code>${requisites || '—'}</code>`;
+
+        // Кнопка статуса под сообщением
+        const reply_markup = {
+            inline_keyboard: [[
+                { text: '⏳ Ожидает оплаты', callback_data: 'status_pending' }
+            ]]
+        };
 
         // Отправляем фото с подписью
         const tgRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
@@ -44,7 +51,8 @@ module.exports = async function handler(req, res) {
                 chat_id: chatId,
                 photo: 'https://github.com/HuntersNetPlus/PvZ/blob/main/AV_1-ezgif.com-video-to-webp-converter.webp?raw=true',
                 caption,
-                parse_mode: 'HTML'
+                parse_mode: 'HTML',
+                reply_markup
             })
         });
 
@@ -58,7 +66,8 @@ module.exports = async function handler(req, res) {
                 body: JSON.stringify({
                     chat_id: chatId,
                     text: caption,
-                    parse_mode: 'HTML'
+                    parse_mode: 'HTML',
+                    reply_markup
                 })
             });
             const textData = await textRes.json();
