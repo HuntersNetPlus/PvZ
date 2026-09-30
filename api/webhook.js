@@ -1,8 +1,13 @@
 // api/webhook.js — Telegram Bot webhook handler
-// Vercel Serverless Function
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
-const WEBAPP_URL = process.env.WEBAPP_URL; // https://your-project.vercel.app/order.html
+
+// URL витрины (мини-апп)
+const SHOP_URL = process.env.WEBAPP_URL || 'https://pvz-pink.vercel.app/index%20(50).html';
+// URL формы заказа
+const ORDER_URL = process.env.WEBAPP_URL
+    ? process.env.WEBAPP_URL.replace('index%20(50).html', 'order.html').replace('index (50).html', 'order.html')
+    : 'https://pvz-pink.vercel.app/order.html';
 
 async function sendMessage(chatId, text, extra = {}) {
     const body = { chat_id: chatId, text, parse_mode: 'HTML', ...extra };
@@ -14,30 +19,7 @@ async function sendMessage(chatId, text, extra = {}) {
     return res.json();
 }
 
-async function sendOrderButton(chatId) {
-    const body = {
-        chat_id: chatId,
-        text: '📦 <b>Создать заказ</b>\n\nНажми кнопку ниже чтобы открыть форму заказа:',
-        parse_mode: 'HTML',
-        reply_markup: {
-            inline_keyboard: [[
-                {
-                    text: '🛒 Открыть форму заказа',
-                    web_app: { url: WEBAPP_URL }
-                }
-            ]]
-        }
-    };
-    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-    });
-    return res.json();
-}
-
 module.exports = async function handler(req, res) {
-    // Только POST запросы от Telegram
     if (req.method !== 'POST') {
         return res.status(200).json({ ok: true, info: 'Bot is running' });
     }
@@ -45,7 +27,6 @@ module.exports = async function handler(req, res) {
     try {
         const update = req.body;
 
-        // Обработка обычных сообщений
         if (update.message) {
             const msg = update.message;
             const chatId = msg.chat.id;
@@ -53,14 +34,34 @@ module.exports = async function handler(req, res) {
 
             if (text === '/start') {
                 await sendMessage(chatId,
-                    '👋 Привет! Я бот PvZ Shop.\n\n' +
-                    '📦 <b>/order</b> — создать заказ\n'
+                    'Добро пожаловать в PvZ Shop.\n\nБыстро, анонимно и круглосуточно.\nНажми кнопку ниже чтобы открыть витрину.',
+                    {
+                        reply_markup: {
+                            inline_keyboard: [[
+                                {
+                                    text: 'Открыть витрину',
+                                    web_app: { url: 'https://huntersnetplus.github.io/PvZ/' }
+                                }
+                            ]]
+                        }
+                    }
                 );
             } else if (text === '/order') {
-                await sendOrderButton(chatId);
+                await sendMessage(chatId,
+                    'Форма создания заказа.\n\nЗаполни все поля и нажми "Сформировать заказ".',
+                    {
+                        reply_markup: {
+                            inline_keyboard: [[
+                                {
+                                    text: 'Создать заказ',
+                                    web_app: { url: 'https://pvz-pink.vercel.app/order.html' }
+                                }
+                            ]]
+                        }
+                    }
+                );
             } else {
-                // Любое другое сообщение — подсказка
-                await sendMessage(chatId, 'Используй /order чтобы создать заказ.');
+                await sendMessage(chatId, 'Используй /start чтобы открыть витрину.');
             }
         }
 
