@@ -1234,7 +1234,92 @@ body {
 
 <script src="https://cdn.jsdelivr.net/npm/kjua@0.6.0/dist/kjua.min.js"></script>
 <script>
+// ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
+var orderId = null;
+var selectedCity = '';
+var selectedMetro = '';
+var selected = { name: null, price: 0, discount: 0 };
+var remainingSeconds = 30 * 60;
+var timerInterval = null;
+var screens = {};
+
+// ===== localStorage =====
+var ORDER_STORAGE_KEY = 'pvz_order_data';
+
+function saveOrderToStorage() {
+    if (!selected.name) return;
+    var orderData = {
+        orderId: orderId,
+        selectedCity: selectedCity,
+        selectedMetro: selectedMetro,
+        productName: selected.name,
+        productPrice: selected.price,
+        productDiscount: selected.discount,
+        currency: document.getElementById('currency') ? document.getElementById('currency').value : 'SBP',
+        remainingSeconds: remainingSeconds,
+        savedAt: Date.now()
+    };
+    localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(orderData));
+}
+
+function loadOrderFromStorage() {
+    var stored = localStorage.getItem(ORDER_STORAGE_KEY);
+    if (!stored) return null;
+    try {
+        var orderData = JSON.parse(stored);
+        // Вычитаем прошедшее время
+        var elapsed = Math.floor((Date.now() - orderData.savedAt) / 1000);
+        orderData.remainingSeconds = Math.max(0, orderData.remainingSeconds - elapsed);
+        if (orderData.remainingSeconds <= 0) {
+            localStorage.removeItem(ORDER_STORAGE_KEY);
+            return null;
+        }
+        return orderData;
+    } catch(e) {
+        localStorage.removeItem(ORDER_STORAGE_KEY);
+        return null;
+    }
+}
+
+function clearOrderStorage() {
+    localStorage.removeItem(ORDER_STORAGE_KEY);
+}
+
+// ===== ТАЙМЕР =====
+function startTimer(seconds) {
+    remainingSeconds = seconds;
+    if (timerInterval) clearInterval(timerInterval);
+    
+    function tick() {
+        var timerEl = document.getElementById('timer');
+        if (!timerEl) return;
+        var m = Math.floor(remainingSeconds / 60);
+        var s = remainingSeconds % 60;
+        timerEl.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+        
+        if (remainingSeconds > 0) {
+            remainingSeconds--;
+            // Сохраняем каждые 5 секунд чтобы не грузить I/O
+            if (remainingSeconds % 5 === 0) saveOrderToStorage();
+        } else {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            clearOrderStorage();
+            alert('⏰ Время бронирования истекло. Оформите новый заказ.');
+            location.reload();
+        }
+    }
+    
+    tick();
+    timerInterval = setInterval(tick, 1000);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+screens = {
+    welcome: document.getElementById('welcome'),
+    choose: document.getElementById('choose'),
+    payment: document.getElementById('payment')
+};
 
 // Функция обновления всех span с городом и метро
     function updateLocationTexts() {
@@ -1270,8 +1355,6 @@ function updateProductTexts() {
 
 
 // Генерация и обновление ID заказа
-let orderId = null;
-
 function generateOrderId() {
     // Генерируем случайное число от 10000 до 99999 (5 цифр)
     orderId = Math.floor(10000 + Math.random() * 90000);
@@ -1286,13 +1369,7 @@ function generateOrderId() {
 
     
     
-    const screens = {
-        welcome: document.getElementById('welcome'),
-        choose: document.getElementById('choose'),
-        payment: document.getElementById('payment')
-    };
     const loader = document.getElementById('loader');
-    let selected = { name: null, price: 0, discount: 0 };
     
     // Предзагрузка картинок для тултипов
     const preloadImages = [
@@ -1340,9 +1417,13 @@ function selectOption(name, price) {
     generateOrderId();
     openScreen('payment');
     
+    // Запускаем таймер и сохраняем заказ
+    startTimer(30 * 60);
+    
     setTimeout(() => {
         updateConversion();
         updateProductTexts();
+        saveOrderToStorage();
     }, 250);
 }
 
@@ -1351,8 +1432,16 @@ function selectOption(name, price) {
     
       
 
-function openScreen(id) {
+function openScreen(id, instant) {
     Object.values(screens).forEach(s => s.classList.remove('active'));
+    
+    // Мгновенный показ без лоадера (при восстановлении из localStorage)
+    if (instant) {
+        screens[id].classList.add('active');
+        updateLocationTexts();
+        updateProductTexts();
+        return;
+    }
     
     const loaderText = document.getElementById('loader-text');
     let loadingTime = 1500;
@@ -1454,11 +1543,8 @@ async function updateConversion() {
     const walletBlock = document.getElementById('wallet_address');
     const w = wallets[cur];
 
-    // ✅ Если SBP — выводим анкорную ссылку
-    if (cur === "SBP" && w.startsWith("https://t.me/")) {
-        walletBlock.innerHTML = `<a href="${w}" class="sbp-link" target="_blank" rel="noopener">Перейдите по ссылке для оплаты</a>`;
-        
-    } else {
+    // ✅ Если SBP — ссылка с суммой формируется ниже в блоке курса SBP
+    if (cur !== "SBP") {
         // Все остальные валюты — просто текст
         walletBlock.innerText = w || "—";
     }
@@ -1474,8 +1560,14 @@ async function updateConversion() {
     // --- Курс SBP ---
     if (cur === "SBP") {
         const usdtToRub = 95;
-        const amountRub = (selected.price * usdtToRub).toFixed(2);
+        const amountRub = (selected.price * usdtToRub).toFixed(0);
         document.getElementById('converted_amount').innerText = `${amountRub} RUB`;
+
+        // Обновляем ссылку с суммой и номером заказа
+        const orderNum = orderId || '—';
+        const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${amountRub} ₽`);
+        const sbpUrl = `https://t.me/PVZ_BOSS?text=${msgText}`;
+        walletBlock.innerHTML = `<a href="${sbpUrl}" class="sbp-link" target="_blank" rel="noopener">Перейдите по ссылке для оплаты</a>`;
         return;
     }
 
@@ -1905,9 +1997,6 @@ const metroData = {
 const citySelect = document.getElementById('citySelect');
 const metroSelect = document.getElementById('metroSelect');
 const welcomeBtn = document.getElementById('welcomeBtn');
-
-let selectedCity = '';
-let selectedMetro = '';
 
 citySelect.addEventListener('change', function() {
     selectedCity = this.value;
@@ -2395,8 +2484,7 @@ feed.addEventListener("scroll", () => {
 })();
 
 
-const summary = document.getElementById("summary-text");
-summary.innerText ="Данные заказа: " + selected.name;
+// summary-text удалён (элемента нет в DOM)
 
 
 
@@ -2452,149 +2540,54 @@ summary.innerText ="Данные заказа: " + selected.name;
 
  
 
-    
- 
+
 
     
+
+// ---- (блок восстановления заказа ниже) ----
+    (function restoreOrder() {
+        var orderData = loadOrderFromStorage();
+        if (!orderData) return;
+        
+        // Восстанавливаем данные
+        orderId = orderData.orderId;
+        selectedCity = orderData.selectedCity;
+        selectedMetro = orderData.selectedMetro;
+        selected.name = orderData.productName;
+        selected.price = orderData.productPrice;
+        selected.discount = orderData.productDiscount || orderData.productPrice * 0.5;
+        
+        // UI
+        document.querySelectorAll('.order-id').forEach(function(el) { el.textContent = orderId; });
+        document.getElementById('pay_title').innerText = selected.name || '';
+        document.getElementById('price_usdt').innerText = selected.price || '';
+        
+        var currencyEl = document.getElementById('currency');
+        if (currencyEl && orderData.currency) currencyEl.value = orderData.currency;
+        
+        updateLocationTexts();
+        updateProductTexts();
+        
+        // Показываем экран оплаты МГНОВЕННО (без лоадера)
+        openScreen('payment', true);
+        
+        // Запускаем таймер с оставшимся временем
+        startTimer(orderData.remainingSeconds);
+        
+        // Обновляем конвертацию
+        setTimeout(updateConversion, 100);
+        
+        console.log('🔄 Заказ восстановлен из localStorage');
+    })();
+
+    // Сохранение при смене валюты
+    document.getElementById('currency').addEventListener('change', function() {
+        if (screens.payment.classList.contains('active')) {
+            saveOrderToStorage();
+        }
+    });
 
 }); // КОНЕЦ DOMContentLoaded
-
-
-    // ===== LOCAL STORAGE & TIMER =====
-const ORDER_STORAGE_KEY = 'pvz_order_data';
-const ORDER_EXPIRY_TIME = 30 * 60 * 1000; // 30 минут в миллисекундах
-
-// Функция сохранения данных заказа
-function saveOrderToStorage() {
-    const orderData = {
-        orderId: orderId,
-        selectedCity: selectedCity,
-        selectedMetro: selectedMetro,
-        productName: selected.name,
-        productPrice: selected.price,
-        currency: document.getElementById('currency').value,
-        expiryTime: Date.now() + ORDER_EXPIRY_TIME,
-        remainingSeconds: remainingSeconds
-    };
-    
-    localStorage.setItem(ORDER_STORAGE_KEY, JSON.stringify(orderData));
-    console.log('💾 Заказ сохранён:', orderData);
-}
-
-// Функция загрузки данных заказа
-function loadOrderFromStorage() {
-    const stored = localStorage.getItem(ORDER_STORAGE_KEY);
-    
-    if (!stored) {
-        console.log('📦 Нет сохранённых данных');
-        return null;
-    }
-    
-    const orderData = JSON.parse(stored);
-    
-    // Проверяем, не истёк ли срок
-    if (Date.now() > orderData.expiryTime) {
-        console.log('⏰ Заказ истёк, очищаем');
-        localStorage.removeItem(ORDER_STORAGE_KEY);
-        return null;
-    }
-    
-    console.log('✅ Заказ загружен:', orderData);
-    return orderData;
-}
-
-// Функция очистки данных
-function clearOrderStorage() {
-    localStorage.removeItem(ORDER_STORAGE_KEY);
-    console.log('🗑️ Данные заказа очищены');
-}
-
-// Восстановление данных при загрузке страницы
-function restoreOrder() {
-    const orderData = loadOrderFromStorage();
-    
-    if (!orderData) return false;
-    
-    // Восстанавливаем данные
-    orderId = orderData.orderId;
-    selectedCity = orderData.selectedCity;
-    selectedMetro = orderData.selectedMetro;
-    selected.name = orderData.productName;
-    selected.price = orderData.productPrice;
-    remainingSeconds = orderData.remainingSeconds;
-    
-    // Обновляем UI
-    document.querySelectorAll('.order-id').forEach(el => {
-        el.textContent = orderId;
-    });
-    
-    document.getElementById('currency').value = orderData.currency;
-    
-    updateLocationTexts();
-    updateProductTexts();
-    updateConversion();
-    
-    // Открываем экран оплаты
-    setTimeout(() => {
-        openScreen('payment');
-    }, 100);
-    
-    console.log('🔄 Заказ восстановлен');
-    return true;
-}
-
-// Модифицируем функцию selectOption
-const originalSelectOption = selectOption;
-selectOption = function(name, price) {
-    originalSelectOption(name, price);
-    saveOrderToStorage();
-};
-
-// Модифицируем таймер для сохранения каждую секунду
-const originalUpdateTimer = updateTimer;
-updateTimer = function() {
-    originalUpdateTimer();
-    
-    // Сохраняем только если заказ активен
-    if (screens.payment.classList.contains('active')) {
-        saveOrderToStorage();
-    }
-    
-    // Если время истекло - очищаем
-    if (remainingSeconds === 0) {
-        clearOrderStorage();
-    }
-};
-
-// Сохранение при смене валюты
-document.getElementById('currency').addEventListener('change', function() {
-    if (screens.payment.classList.contains('active')) {
-        saveOrderToStorage();
-    }
-});
-
-// Проверка и восстановление при загрузке страницы
-window.addEventListener('load', function() {
-    const restored = restoreOrder();
-    
-    if (!restored) {
-        // Если нет сохранённого заказа, показываем welcome экран
-        openScreen('welcome');
-    }
-});
-
-// Автоочистка через 30 минут (дополнительная защита)
-setInterval(function() {
-    const orderData = loadOrderFromStorage();
-    if (orderData && Date.now() > orderData.expiryTime) {
-        clearOrderStorage();
-        alert('⏰ Время бронирования истекло. Пожалуйста, оформите новый заказ.');
-        location.reload();
-    }
-}, 60000); // Проверка каждую минуту
-
-console.log('✅ LocalStorage система активирована');
-
 </script>
 
     <!-- ===== РАБОЧИЙ МОБИЛЬНЫЙ СКРОЛЛ ===== -->
@@ -2658,46 +2651,7 @@ window.addEventListener('load', function() {
 
 
 
-<script>
-    //ТАЙМЕР 
-    
 
-console.log('Скрипт запустился');
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOMContentLoaded сработал');
-    
-    const timerElement = document.getElementById('timer');
-    console.log('Элемент найден:', timerElement);
-    
-    if (!timerElement) {
-        console.error('Элемент с id="timer" не найден!');
-        return;
-    }
-    
-    let remainingSeconds = 30 * 60;
-    
-    function updateTimer() {
-        const minutes = Math.floor(remainingSeconds / 60);
-        const seconds = remainingSeconds % 60;
-        timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        console.log('Обновление:', timerElement.textContent, 'Осталось секунд:', remainingSeconds);
-        
-        if (remainingSeconds > 0) {
-            remainingSeconds--;
-        } else {
-            clearInterval(timerInterval);
-            console.log('Таймер завершён');
-        }
-    }
-    
-    updateTimer();
-    const timerInterval = setInterval(updateTimer, 1000);
-    console.log('Таймер запущен');
-});
-
-
-</script>
 
     
 

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Создать заказ</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: Arial, sans-serif;
+    background: #17212b;
+    color: white;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+h2 {
+    color: #6ab2f2;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.form-group {
+    margin-bottom: 14px;
+}
+
+label {
+    display: block;
+    color: #6ab2f2;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 11px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #3a5068;
+    background: #1d2b3a;
+    color: white;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #6ab2f2;
+}
+
+select {
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%236ab2f2" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 36px;
+}
+
+select option {
+    background: #17212b;
+}
+
+select:disabled {
+    opacity: 0.45;
+}
+
+textarea {
+    resize: none;
+    height: 70px;
+    font-size: 13px;
+}
+
+.row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.delivery-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.delivery-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #6ab2f2;
+    flex-shrink: 0;
+}
+
+.delivery-toggle span {
+    font-size: 14px;
+    color: #aad4f5;
+}
+
+#address-block {
+    display: none;
+    margin-bottom: 14px;
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid #2a3f52;
+    margin: 18px 0;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #2f6ea5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 6px;
+}
+
+.submit-btn:hover { background: #3a82c0; }
+.submit-btn:active { transform: scale(0.98); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.status-msg {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 14px;
+    min-height: 20px;
+    color: #89ED5E;
+}
+
+.status-msg.error { color: #ff6b6b; }
+
+/* Превью заказа */
+.preview-box {
+    background: #1d2b3a;
+    border: 1px solid #3a5068;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    line-height: 1.7;
+    display: none;
+}
+
+.preview-box.visible { display: block; }
+
+.preview-box .row {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #243444;
+    padding: 4px 0;
+}
+
+.preview-box .row:last-child { border-bottom: none; }
+.preview-box .key { color: #6ab2f2; }
+.preview-box .val { color: white; text-align: right; max-width: 60%; word-break: break-word; }
+
+.preview-title {
+    color: #6ab2f2;
+    font-size: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.order-id-badge {
+    background: #2f6ea5;
+    color: white;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<h2>📦 Создать заказ</h2>
+
+<!-- ГОРОД И МЕТРО -->
+<div class="form-group">
+    <label>Город</label>
+    <select id="city">
+        <option value="">Выберите город</option>
+        <option value="moscow">Москва</option>
+        <option value="spb">Санкт-Петербург</option>
+        <option value="kazan">Казань</option>
+        <option value="novgorod">Нижний Новгород</option>
+        <option value="samara">Самара</option>
+        <option value="novosib">Новосибирск</option>
+        <option value="ekb">Екатеринбург</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label>Станция метро</label>
+    <select id="metro" disabled>
+        <option value="">Сначала выберите город</option>
+    </select>
+</div>
+
+<!-- АДРЕСНАЯ ДОСТАВКА -->
+<label class="delivery-toggle">
+    <input type="checkbox" id="delivery-check">
+    <span>📍 Адресная доставка (вместо метро)</span>
+</label>
+
+<div id="address-block">
+    <div class="form-group">
+        <label>Адрес доставки</label>
+        <input type="text" id="address-input" placeholder="Улица, дом, квартира...">
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ТОВАР -->
+<div class="row2">
+    <div class="form-group">
+        <label>Вещество</label>
+        <select id="substance">
+            <option value="">Выберите</option>
+            <option>ZAS</option>
+            <option>Экстази</option>
+            <option>Бутират GHB</option>
+            <option>Крек</option>
+            <option>Xanax</option>
+            <option>Лирика</option>
+            <option>Мефедрон</option>
+            <option>Мефедрон (мука)</option>
+            <option>Кокаин</option>
+            <option>A-PVP</option>
+            <option>Гашиш Ice-o-Lator</option>
+            <option>Гашиш Mercedes Benz</option>
+            <option>Бошки Amnesia Haze</option>
+            <option>Бошки Critical Kush</option>
+            <option>Бошки Gorilla Kush</option>
+            <option>Бошки White Widow</option>
+            <option>Амфетамин</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Количество</label>
+        <select id="amount">
+            <option value="">—</option>
+            <option>1 гр</option>
+            <option>2 гр</option>
+            <option>3 гр</option>
+            <option>4 гр</option>
+            <option>5 гр</option>
+            <option>10 гр</option>
+            <option>150 мл</option>
+        </select>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ОПЛАТА -->
+<div class="row2">
+    <div class="form-group">
+        <label>Сумма (₽)</label>
+        <input type="number" id="price-rub" placeholder="5 220" min="0">
+    </div>
+    <div class="form-group">
+        <label>Способ оплаты</label>
+        <select id="pay-method">
+            <option value="СБП / Карта">СБП / Карта</option>
+            <option value="USDT TRC-20">USDT TRC-20</option>
+            <option value="USDT ERC-20">USDT ERC-20</option>
+            <option value="BTC">BTC</option>
+            <option value="ETH">ETH</option>
+            <option value="LTC">LTC</option>
+        </select>
+    </div>
+</div>
+
+<div class="form-group">
+    <label>Реквизиты для оплаты</label>
+    <input type="text" id="requisites" placeholder="Номер карты / адрес кошелька...">
+</div>
+
+<div class="form-group">
+    <label>Комментарий к заказу (необязательно)</label>
+    <textarea id="comment" placeholder="Дополнительная информация..."></textarea>
+</div>
+
+<hr class="divider">
+
+<!-- ПРЕВЬЮ -->
+<div class="preview-box" id="preview">
+    <div class="preview-title">Предпросмотр заказа</div>
+    <div id="preview-content"></div>
+</div>
+
+<button class="submit-btn" id="send-btn" disabled>Сформировать заказ →</button>
+<div class="status-msg" id="status"></div>
+
+<script>
+// ===== КОНФИГ =====
+// Замени на свой токен бота
+var BOT_TOKEN = 'ВАШ_ТОКЕН_БОТА';
+
+// ===== ДАННЫЕ МЕТРО =====
+var metroData = {
+    moscow: ["Александровский сад","Алексеевская","Альма-Атинская","Аминьевская","Аннино","Аэропорт","Автозаводская","Бабушкинская","Багратионовская","Баррикадная","Бауманская","Беговая","Беломорская","Белорусская","Беляево","Бибирево","Библиотека имени Ленина","Битцевский парк","Борисово","Ботанический сад","Братиславская","Бульвар Дмитрия Донского","Бульвар Рокоссовского","Бунинская аллея","Бутырская","ВДНХ","Верхние Лихоборы","Владыкино","Водный стадион","Войковская","Волгоградский проспект","Волжская","Волоколамская","Воробьёвы горы","Воронцовская","Выставочная","Выхино","Динамо","Дмитровская","Добрынинская","Домодедовская","Достоевская","Жулебино","Зябликово","Измайловская","Калужская","Кантемировская","Каширская","Киевская","Китай-город","Кожуховская","Коломенская","Коммунарка","Коньково","Котельники","Красногвардейская","Краснопресненская","Красносельская","Красные Ворота","Кропоткинская","Крылатское","Кузнецкий Мост","Кузьминки","Кунцевская","Курская","Кутузовская","Ленинский проспект","Лермонтовский проспект","Лесопарковая","Лефортово","Лихоборы","Ломоносовский проспект","Лубянка","Лужники","Люблино","Марина Роща","Марксистская","Марьино","Маяковская","Медведково","Международная","Менделеевская","Минская","Молодёжная","Нагатинская","Нагорная","Нахимовский проспект","Некрасовка","Нижегородская","Новогиреево","Новокосино","Новокузнецкая","Новопеределкино","Новослободская","Новые Черёмушки","Окружная","Охотный Ряд","Павелецкая","Панфиловская","Парк Победы","Парк культуры","Партизанская","Петровский парк","Печатники","Пионерская","Планерная","Площадь Гагарина","Площадь Ильича","Площадь Революции","Полежаевская","Полянка","Пражская","Прокшино","Проспект Вернадского","Проспект Мира","Профсоюзная","Пушкинская","Раменки","Рассказовка","Рижская","Римская","Румянцево","Савёловская","Саларьево","Свиблово","Севастопольская","Селигерская","Семеновская","Серпуховская","Славянский бульвар","Смоленская","Сокольники","Солнцево","Спортивная","Сретенский бульвар","Строгино","Студенческая","Суворовская","Сухаревская","Сходненская","Таганская","Текстильщики","Тёплый Стан","Технопарк","Тимирязевская","Третьяковская","Тропарёво","Трубная","Тульская","Тургеневская","Тушинская","Угрешская","Улица 1905 года","Университет","Фили","Фонвизинская","Хорошёвская","Ховрино","Царицыно","Цветной бульвар","ЦСКА","Черкизовская","Чертановская","Чеховская","Чистые пруды","Чкаловская","Шаболовская","Шелепиха","Шипиловская","Щёлковская","Щукинская","Электрозаводская","Юго-Западная","Южная","Якиманка","Ясенево"],
+    spb: ["Автово","Адмиралтейская","Академическая","Балтийская","Василеостровская","Владимирская","Волковская","Выборгская","Горьковская","Гостиный двор","Гражданский проспект","Девяткино","Достоевская","Елизаровская","Звёздная","Кировский завод","Комендантский проспект","Крестовский остров","Купчино","Ладожская","Ленинский проспект","Лесная","Лиговский проспект","Ломоносовская","Маяковская","Международная","Московская","Московские ворота","Нарвская","Невский проспект","Новочеркасская","Обводный канал","Обухово","Озерки","Парк Победы","Парнас","Петроградская","Пионерская","Площадь Александра Невского","Площадь Восстания","Площадь Ленина","Площадь Мужества","Политехническая","Приморская","Проспект Большевиков","Проспект Ветеранов","Проспект Просвещения","Пушкинская","Рыбацкое","Садовая","Сенная площадь","Спасская","Спортивная","Старая Деревня","Технологический институт","Удельная","Улица Дыбенко","Фрунзенская","Чёрная речка","Чернышевская","Чкаловская","Электросила"],
+    kazan: ["Аметьево","Горки","Кремлёвская","Проспект Победы","Суконная Слобода","Северный вокзал","Пионерская","Площадь Тукая","Яшьлек"],
+    novgorod: ["Парк культуры","Горьковская","Московская","Канавинская","Площадь 1905 года","Стрелка"],
+    novosib: ["Берёзовая роща","Гагаринская","Золотая Нива","Заельцовская","Красный Проспект","Маршала Покрышкина","Октябрьская","Площадь Маркса","Площадь Ленина","Речной вокзал","Студенческая","Сибирская","Площадь Гарина-Михайловского"],
+    samara: ["Алабинская","Российская","Московская","Гагаринская","Спортивная","Советская","Победа","Безымянка","Кировская","Юнгородок"],
+    ekb: ["Ботаническая","Геологическая","Площадь 1905 года","Проспект Космонавтов","Уралмаш","Чкаловская","Динамо"]
+};
+
+var cityNames = {
+    moscow: 'Москва', spb: 'Санкт-Петербург', kazan: 'Казань',
+    novgorod: 'Нижний Новгород', samara: 'Самара', novosib: 'Новосибирск', ekb: 'Екатеринбург'
+};
+
+// ===== ЭЛЕМЕНТЫ =====
+var cityEl = document.getElementById('city');
+var metroEl = document.getElementById('metro');
+var deliveryCheck = document.getElementById('delivery-check');
+var addressBlock = document.getElementById('address-block');
+var addressInput = document.getElementById('address-input');
+var substanceEl = document.getElementById('substance');
+var amountEl = document.getElementById('amount');
+var priceEl = document.getElementById('price-rub');
+var payMethodEl = document.getElementById('pay-method');
+var reqEl = document.getElementById('requisites');
+var commentEl = document.getElementById('comment');
+var sendBtn = document.getElementById('send-btn');
+var statusEl = document.getElementById('status');
+var preview = document.getElementById('preview');
+var previewContent = document.getElementById('preview-content');
+
+// ===== TELEGRAM WebApp =====
+var tg = window.Telegram && window.Telegram.WebApp;
+var chatId = null;
+
+if (tg) {
+    tg.ready();
+    tg.expand();
+    // Получаем chat_id из initData
+    try {
+        var params = new URLSearchParams(tg.initData);
+        var userData = JSON.parse(params.get('user') || '{}');
+        chatId = userData.id || null;
+    } catch(e) {}
+}
+
+// ===== ГОРОД → МЕТРО =====
+cityEl.addEventListener('change', function() {
+    var city = this.value;
+    metroEl.innerHTML = '';
+    if (city && metroData[city]) {
+        metroEl.disabled = false;
+        var def = document.createElement('option');
+        def.value = '';
+        def.textContent = 'Выберите станцию';
+        metroEl.appendChild(def);
+        metroData[city].forEach(function(s) {
+            var opt = document.createElement('option');
+            opt.value = s;
+            opt.textContent = s;
+            metroEl.appendChild(opt);
+        });
+    } else {
+        metroEl.disabled = true;
+        var def2 = document.createElement('option');
+        def2.textContent = 'Сначала выберите город';
+        metroEl.appendChild(def2);
+    }
+    updatePreview();
+});
+
+metroEl.addEventListener('change', updatePreview);
+
+// ===== ДОСТАВКА =====
+deliveryCheck.addEventListener('change', function() {
+    if (this.checked) {
+        addressBlock.style.display = 'block';
+        metroEl.disabled = true;
+        metroEl.style.opacity = '0.4';
+    } else {
+        addressBlock.style.display = 'none';
+        metroEl.disabled = !cityEl.value;
+        metroEl.style.opacity = '';
+    }
+    updatePreview();
+});
+
+addressInput.addEventListener('input', updatePreview);
+
+// ===== LIVE PREVIEW =====
+[substanceEl, amountEl, priceEl, payMethodEl, reqEl, commentEl].forEach(function(el) {
+    el.addEventListener('input', updatePreview);
+    el.addEventListener('change', updatePreview);
+});
+
+function generateOrderId() {
+    return Math.floor(10000 + Math.random() * 90000);
+}
+
+var currentOrderId = generateOrderId();
+
+function getLocation() {
+    if (deliveryCheck.checked) {
+        return addressInput.value.trim() || '—';
+    }
+    var city = cityNames[cityEl.value] || '';
+    var metro = metroEl.value || '';
+    if (!city) return '—';
+    return city + (metro ? ', ' + metro : '');
+}
+
+function isFormValid() {
+    var loc = deliveryCheck.checked ? addressInput.value.trim() : (cityEl.value && metroEl.value);
+    return loc && substanceEl.value && amountEl.value && priceEl.value && reqEl.value.trim();
+}
+
+function updatePreview() {
+    if (!isFormValid()) {
+        preview.classList.remove('visible');
+        sendBtn.disabled = true;
+        return;
+    }
+
+    var loc = getLocation();
+    var product = substanceEl.value + ' [' + amountEl.value + ']';
+    var price = Number(priceEl.value).toLocaleString('ru-RU') + ' ₽';
+    var payMethod = payMethodEl.value;
+    var req = reqEl.value.trim();
+    var comment = commentEl.value.trim();
+
+    var rows = [
+        ['Заказ №', '<span class="order-id-badge">#' + currentOrderId + '</span>'],
+        ['Локация', loc],
+        ['Позиция', product],
+        ['Сумма', price],
+        ['Оплата', payMethod],
+        ['Реквизиты', req],
+    ];
+    if (comment) rows.push(['Комментарий', comment]);
+    rows.push(['Статус', '⏳ Заказ ожидает оплаты']);
+
+    previewContent.innerHTML = rows.map(function(r) {
+        return '<div class="row"><span class="key">' + r[0] + '</span><span class="val">' + r[1] + '</span></div>';
+    }).join('');
+
+    preview.classList.add('visible');
+    sendBtn.disabled = false;
+}
+
+// ===== ОТПРАВКА =====
+sendBtn.addEventListener('click', function() {
+    if (!isFormValid()) return;
+
+    // Если не открыто через Telegram WebApp — используем резервный способ
+    if (!chatId && tg) {
+        statusEl.textContent = 'Не удалось получить ID пользователя';
+        statusEl.className = 'status-msg error';
+        return;
+    }
+
+    var loc = getLocation();
+    var product = substanceEl.value + ' [' + amountEl.value + ']';
+    var price = Number(priceEl.value).toLocaleString('ru-RU') + ' ₽';
+    var comment = commentEl.value.trim();
+
+    // Формируем красивое сообщение (HTML разметка для Telegram)
+    var msg = '🧾 <b>НОВЫЙ ЗАКАЗ #' + currentOrderId + '</b>\n\n'
+        + '📍 <b>Локация:</b> ' + loc + '\n'
+        + '💊 <b>Позиция:</b> ' + product + '\n'
+        + '💰 <b>Сумма:</b> ' + price + '\n'
+        + '💳 <b>Оплата:</b> ' + payMethodEl.value + '\n'
+        + '🔑 <b>Реквизиты:</b> <code>' + reqEl.value.trim() + '</code>\n'
+        + (comment ? '📝 <b>Комментарий:</b> ' + comment + '\n' : '')
+        + '\n⏰ <b>Время на оплату:</b> 30 минут'
+        + '\n\n📌 <b>Статус:</b> Заказ ожидает оплаты';
+
+    sendBtn.disabled = true;
+    statusEl.textContent = 'Отправка...';
+    statusEl.className = 'status-msg';
+
+    // Шаг 1: отправляем картинку с подписью
+    var formData = new FormData();
+    formData.append('chat_id', chatId);
+    formData.append('photo', 'https://github.com/HuntersNetPlus/PvZ/blob/main/AV_1-ezgif.com-video-to-webp-converter.webp?raw=true');
+    formData.append('caption', msg);
+    formData.append('parse_mode', 'HTML');
+
+    fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendPhoto', {
+        method: 'POST',
+        body: formData
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data.ok) {
+            statusEl.textContent = '✅ Заказ успешно отправлен!';
+            statusEl.className = 'status-msg';
+            sendBtn.textContent = 'Заказ отправлен ✓';
+
+            // Закрываем WebApp через 2 секунды
+            setTimeout(function() {
+                if (tg) tg.close();
+            }, 2000);
+        } else {
+            throw new Error(data.description || 'Ошибка API');
+        }
+    })
+    .catch(function(err) {
+        statusEl.textContent = '❌ Ошибка: ' + err.message;
+        statusEl.className = 'status-msg error';
+        sendBtn.disabled = false;
+    });
+});
+</script>
+
+<!-- Telegram WebApp SDK -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+</body>
+</html>
