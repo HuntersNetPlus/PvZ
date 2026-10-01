@@ -334,8 +334,9 @@ if (tg) {
         </div>
         <div class="form-group">
             <label>Способ</label>
-            <select id="pay-method">
-                <option value="СБП / Карта">СБП / Карта</option>
+            <select id="pay-method" onchange="onPayMethodChange()">
+                <option value="BPAY_QR">Авто-QR (СБП) ✦</option>
+                <option value="СБП / Карта">СБП / Карта (вручную)</option>
                 <option value="USDT TRC-20">USDT TRC-20</option>
                 <option value="USDT ERC-20">USDT ERC-20</option>
                 <option value="BTC">BTC</option>
@@ -344,8 +345,8 @@ if (tg) {
             </select>
         </div>
     </div>
-    <div class="form-group">
-        <label>Реквизиты</label>
+    <div class="form-group" id="requisites-group">
+        <label>Реквизиты <span id="req-hint" style="color:#3a5068;font-size:11px;">(не нужны для Авто-QR)</span></label>
         <input type="text" id="requisites" placeholder="Номер карты / адрес кошелька">
     </div>
     <div class="form-group">
@@ -458,9 +459,11 @@ function getLocation() {
 }
 
 function isFormValid() {
+    var isBpay = payMethodEl.value === 'BPAY_QR';
     return cityEl.value && metroEl.value
         && substanceEl.value && amountEl.value.trim()
-        && priceEl.value && reqEl.value.trim();
+        && priceEl.value
+        && (isBpay || reqEl.value.trim()); // реквизиты не нужны для Авто-QR
 }
 
 function updatePreview() {
@@ -498,6 +501,22 @@ function updatePreview() {
     sendBtn.disabled = false;
 }
 
+function onPayMethodChange() {
+    var isBpay = payMethodEl.value === 'BPAY_QR';
+    var reqGroup = document.getElementById('requisites-group');
+    var reqHint  = document.getElementById('req-hint');
+    if (isBpay) {
+        reqGroup.style.opacity = '0.4';
+        reqHint.style.color = '#6ab2f2';
+        sendBtn.textContent = 'Создать QR для оплаты';
+    } else {
+        reqGroup.style.opacity = '1';
+        reqHint.style.color = '#3a5068';
+        sendBtn.textContent = 'Сформировать заказ';
+    }
+    updatePreview();
+}
+
 // ===== ОТПРАВКА =====
 sendBtn.addEventListener('click', function() {
     if (!isFormValid()) return;
@@ -512,41 +531,102 @@ sendBtn.addEventListener('click', function() {
     var product = substanceEl.value + ' ' + amountEl.value.trim();
     var price   = Number(priceEl.value).toLocaleString('ru-RU') + ' руб';
     var comment = commentEl.value.trim();
+    var isBpay  = payMethodEl.value === 'BPAY_QR';
 
     sendBtn.disabled = true;
-    statusEl.textContent = 'Отправка...';
     statusEl.className = 'status-msg';
 
-    fetch('/api/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            chatId:     chatId,
-            orderId:    currentOrderId,
-            location:   loc,
-            product:    product,
-            price:      price,
-            payMethod:  payMethodEl.value,
-            requisites: reqEl.value.trim(),
-            comment:    comment
+    if (isBpay) {
+        // ===== АВТО-QR: создаём платёж через B Pay =====
+        statusEl.textContent = 'Создаём QR для оплаты...';
+
+        fetch('/api/bpay-create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                amount:      priceEl.value,
+                orderId:     currentOrderId,
+                chatId:      chatId,
+                description: product + ' — PvZ Shop'
+            })
         })
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        if (data.ok) {
-            statusEl.textContent = 'Заказ успешно отправлен';
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (!data.ok) throw new Error(data.error || 'Ошибка создания платежа');
+
+            // Сначала уведомляем бота о заказе
+            return fetch('/api/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chatId:     chatId,
+                    orderId:    currentOrderId,
+                    location:   loc,
+                    product:    product,
+                    price:      price,
+                    payMethod:  'Авто-QR (СБП)',
+                    requisites: data.payment_url,
+                    comment:    comment
+                })
+            })
+            .then(function() { return data; }); // пробрасываем data дальше
+        })
+        .then(function(data) {
+            statusEl.textContent = 'QR создан! Открываем страницу оплаты...';
             statusEl.className = 'status-msg';
-            sendBtn.textContent = 'Отправлено';
-            setTimeout(function() { if (tg) tg.close(); }, 1500);
-        } else {
-            throw new Error(data.description || data.error || 'Ошибка API');
-        }
-    })
-    .catch(function(err) {
-        statusEl.textContent = 'Ошибка: ' + err.message;
-        statusEl.className = 'status-msg error';
-        sendBtn.disabled = false;
-    });
+            sendBtn.textContent = 'QR создан ✓';
+
+            // Открываем страницу оплаты
+            setTimeout(function() {
+                if (tg) {
+                    tg.openLink(data.payment_url);
+                    setTimeout(function() { tg.close(); }, 1000);
+                } else {
+                    window.open(data.payment_url, '_blank');
+                }
+            }, 800);
+        })
+        .catch(function(err) {
+            statusEl.textContent = 'Ошибка: ' + err.message;
+            statusEl.className = 'status-msg error';
+            sendBtn.disabled = false;
+        });
+
+    } else {
+        // ===== ОБЫЧНЫЙ ЗАКАЗ: отправляем через /api/send =====
+        statusEl.textContent = 'Отправка...';
+
+        fetch('/api/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chatId:     chatId,
+                orderId:    currentOrderId,
+                location:   loc,
+                product:    product,
+                price:      price,
+                payMethod:  payMethodEl.value,
+                requisites: reqEl.value.trim(),
+                comment:    comment
+            })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.ok) {
+                statusEl.textContent = 'Заказ успешно отправлен';
+                statusEl.className = 'status-msg';
+                sendBtn.textContent = 'Отправлено';
+                setTimeout(function() { if (tg) tg.close(); }, 1500);
+            } else {
+                throw new Error(data.description || data.error || 'Ошибка API');
+            }
+        })
+        .catch(function(err) {
+            statusEl.textContent = 'Ошибка: ' + err.message;
+            statusEl.className = 'status-msg error';
+            sendBtn.disabled = false;
+        });
+    }
 });
 </script>
 
