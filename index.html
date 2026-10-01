@@ -1261,16 +1261,17 @@ body {
   <div style="color:#17212b; font-size:13px; margin-bottom:5px;"> ..... </div>
 
   <!-- КНОПКА ОТМЕНЫ ЗАКАЗА -->
-  <div style="text-align:center; padding-bottom: 30px; margin-top: 8px;">
+  <div style="text-align:center; padding-bottom: 30px; margin-top: 4px;">
     <button id="cancel-order-btn" onclick="showCancelModal()" style="
         background: transparent;
         border: 1px solid #2a3a4a;
         color: #4a6070;
-        font-size: 13px;
+        font-size: 14px;
         cursor: pointer;
-        padding: 10px 24px;
+        padding: 12px 40px;
         border-radius: 6px;
         transition: color 0.2s, border-color 0.2s;
+        width: 65vw;
     " onmouseover="this.style.color='#6ab2f2';this.style.borderColor='#6ab2f2'" onmouseout="this.style.color='#4a6070';this.style.borderColor='#2a3a4a'">
         Отменить заказ
     </button>
@@ -1630,8 +1631,8 @@ async function updateConversion() {
     const qEl = document.getElementById('qrcode');
     qEl.innerHTML = "";
 
-    // Генерация QR
-    if (wallets[cur]) {
+    // Генерация QR только для крипты (не для SBP — там QR строится из payment_url)
+    if (cur !== "SBP" && wallets[cur]) {
         const qrSvg = kjua({
             render: 'svg',
             text: wallets[cur],
@@ -1687,7 +1688,7 @@ async function updateConversion() {
             if (data.ok && data.payment_url) {
                 walletBlock.innerHTML = `<a href="${data.payment_url}" class="sbp-pay-btn" target="_blank" rel="noopener">Перейти к оплате (СБП)</a>`;
 
-                // Генерируем QR из payment_url
+                // Генерируем QR из реального payment_url
                 qEl.innerHTML = "";
                 const qrSvg = kjua({
                     render: 'svg',
@@ -1702,13 +1703,13 @@ async function updateConversion() {
             } else {
                 const orderNum = orderId || '—';
                 const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${document.getElementById('converted_amount').innerText}`);
-                walletBlock.innerHTML = `<div class="sbp-fallback">Реквизиты сейчас выдаются вручную.<br><a href="https://t.me/PVZ_BOSS?text=${msgText}" target="_blank" rel="noopener">Написать оператору →</a></div>`;
+                walletBlock.innerHTML = `<div class="sbp-fallback"><a href="https://t.me/PVZ_BOSS?text=${msgText}" target="_blank" rel="noopener">Запросить реквизиты</a></div>`;
                 clearOrderStorage();
             }
         } catch(e) {
             const orderNum = orderId || '—';
             const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${document.getElementById('converted_amount').innerText}`);
-            walletBlock.innerHTML = `<div class="sbp-fallback">Реквизиты сейчас выдаются вручную.<br><a href="https://t.me/PVZ_BOSS?text=${msgText}" target="_blank" rel="noopener">Написать оператору →</a></div>`;
+            walletBlock.innerHTML = `<div class="sbp-fallback"><a href="https://t.me/PVZ_BOSS?text=${msgText}" target="_blank" rel="noopener">Запросить реквизиты</a></div>`;
             clearOrderStorage();
         }
         return;
