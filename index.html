@@ -60,11 +60,9 @@ body {
 
 
 #card-feed {
-    overflow-y: scroll;
-    touch-action: none; /* ВАЖНО! */
-    -webkit-overflow-scrolling: auto; /* НЕ touch! */
-    overscroll-behavior: none;
-    overflow: hidden; /* ДОБАВЬ ЭТО */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
 }
 
 
@@ -318,21 +316,12 @@ body {
 }
 
 .feed {
-    height: 400px; /* твоя высота */
+    height: 400px;
     overflow-y: auto;
     position: relative;
     scroll-behavior: smooth;
     overscroll-behavior: contain;
-    
-
-    /* Маска градиентом сверху и снизу */
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1) 10%, rgba(0,0,0,1) 90%, rgba(0,0,0,0));
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-size: 100% 100%;
-
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1) 10%, rgba(0,0,0,1) 90%, rgba(0,0,0,0));
-    mask-repeat: no-repeat;
-    mask-size: 100% 100%;
+    -webkit-overflow-scrolling: touch;
 }
 
 
@@ -1250,7 +1239,7 @@ body {
   <div style="color:#17212b; font-size:13px; margin-bottom:5px;"> ..... </div>
 
   <!-- КНОПКА ОТМЕНЫ ЗАКАЗА -->
-  <div style="text-align:center; padding-bottom: 30px;">
+  <div style="text-align:center; padding-bottom: 30px; margin-top: 8px;">
     <button id="cancel-order-btn" onclick="showCancelModal()" style="
         background: transparent;
         border: 1px solid #2a3a4a;
@@ -1293,7 +1282,6 @@ body {
             background: #253648;
             padding: 12px 14px;
             border-radius: 8px;
-            border-left: 3px solid #3a5a6a;
             text-align: left;
         ">
             Если вы уже оплатили заказ — данные будут безвозвратно утеряны. Средства не возвращаются. Обратитесь к оператору до отмены.
@@ -2375,7 +2363,6 @@ document.addEventListener('click', () => {
 const feed = document.getElementById("card-feed");
 const originalOptions = Array.from(feed.querySelectorAll(".option"));
 
-// Функция навешивает обработчик клика на карту
 function attachClickHandler(optionElem) {
     optionElem.addEventListener("click", () => {
         selectOption(
@@ -2385,7 +2372,6 @@ function attachClickHandler(optionElem) {
     });
 }
 
-// Перемешиваем исходные элементы для первой загрузки
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -2397,46 +2383,29 @@ function shuffle(array) {
 function initFeed() {
     const shuffled = shuffle([...originalOptions]);
     feed.innerHTML = "";
-    
-    // Добавляем товары 3 раза (было 2)
-    for (let round = 0; round < 3; round++) {
+    shuffled.forEach(opt => {
+        const clone = opt.cloneNode(true);
+        attachClickHandler(clone);
+        feed.appendChild(clone);
+    });
+}
+
+initFeed();
+
+// Подгрузка при достижении конца
+let isAdding = false;
+
+feed.addEventListener("scroll", () => {
+    const scrollBottom = feed.scrollHeight - feed.scrollTop - feed.clientHeight;
+    if (scrollBottom < 300 && !isAdding) {
+        isAdding = true;
+        const shuffled = shuffle([...originalOptions]);
         shuffled.forEach(opt => {
             const clone = opt.cloneNode(true);
             attachClickHandler(clone);
             feed.appendChild(clone);
         });
-    }
-    
-    console.log('🎬 Фид инициализирован:', feed.children.length, 'товаров');
-}
-
-initFeed();
-
-// Простое добавление без перезапусков
-let isAdding = false;
-
-feed.addEventListener("scroll", () => {
-    // Простая проверка - близко ли к концу
-    const scrollBottom = feed.scrollHeight - feed.scrollTop - feed.clientHeight;
-    
-    // Добавляем когда осталось меньше 500px до конца
-    if (scrollBottom < 500 && !isAdding) {
-        isAdding = true;
-        console.log('➕ Добавляем товары...');
-        
-        setTimeout(() => {
-            const shuffled = shuffle([...originalOptions]);
-            
-            // Добавляем 25 элементов
-            for (let i = 0; i < 25; i++) {
-                const clone = shuffled[i % shuffled.length].cloneNode(true);
-                attachClickHandler(clone);
-                feed.appendChild(clone);
-            }
-            
-            isAdding = false;
-            console.log('✅ Добавлено 25 товаров. Всего:', feed.children.length);
-        }, 200);
+        isAdding = false;
     }
 });
 
@@ -2764,64 +2733,7 @@ function confirmCancelOrder() {
 }
 </script>
 
-    <!-- ===== РАБОЧИЙ МОБИЛЬНЫЙ СКРОЛЛ ===== -->
-<script>
-window.addEventListener('load', function() {
-    const feed = document.getElementById("card-feed");
-    if (!feed) {
-        console.error('Feed не найден!');
-        return;
-    }
-    
-    const SCROLL_SPEED = 65; // Регулируй от 0.3 до 1.0
-    
-    console.log('🎯 Инициализация скролла...');
-    
-    // ===== ДЛЯ МЫШИ =====
-    feed.addEventListener('wheel', function(e) {
-        e.preventDefault();
-        feed.scrollTop += e.deltaY * SCROLL_SPEED;
-        console.log('🖱️ Wheel:', e.deltaY);
-    }, { passive: false });
-    
-    // ===== ДЛЯ TOUCH =====
-    let touchStartY = 0;
-    let touchLastY = 0;
-    let scrollStart = 0;
-    let isTouch = false;
-    
-    feed.addEventListener('touchstart', function(e) {
-        isTouch = true;
-        touchStartY = e.touches[0].clientY;
-        touchLastY = touchStartY;
-        scrollStart = feed.scrollTop;
-        console.log('👆 Touch START:', touchStartY);
-    }, { passive: false });
-    
-    feed.addEventListener('touchmove', function(e) {
-        if (!isTouch) return;
-        
-        e.preventDefault(); // Блокируем нативный скролл
-        
-        const touchY = e.touches[0].clientY;
-        const delta = touchLastY - touchY;
-        
-        // Скроллим СРАЗУ
-        feed.scrollTop += delta * SCROLL_SPEED;
-        
-        touchLastY = touchY;
-        
-        console.log('👆 Touch MOVE:', delta, 'ScrollTop:', feed.scrollTop);
-    }, { passive: false }); // ВАЖНО: passive: false!
-    
-    feed.addEventListener('touchend', function(e) {
-        console.log('👆 Touch END');
-        isTouch = false;
-    }, { passive: false });
-    
-    console.log('✅ Скролл подключён! Скорость:', SCROLL_SPEED);
-});
-</script>
+    <!-- скрипт скролла удалён — используется нативный CSS scroll -->
 
 
 
