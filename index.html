@@ -454,7 +454,7 @@ body {
     font-size: 12px;
     cursor: pointer;
 }
-    .sbp-active {
+.sbp-active {
     max-width: 65vw;
     padding: 8px;
     border: 2px #6ab2f2;
@@ -464,6 +464,26 @@ body {
     font-size: 12px;
     cursor: pointer;
 }
+
+/* Зелёная кнопка оплаты СБП */
+.sbp-pay-btn {
+    display: block;
+    width: 250px;
+    margin: 0 auto;
+    padding: 14px 10px;
+    background: #2ea84f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: background 0.2s;
+}
+.sbp-pay-btn:hover { background: #27963f; }
+.sbp-pay-btn:active { background: #1e7a32; }
 
 .copied {
     background: #6ab2f2;
@@ -1229,7 +1249,70 @@ body {
 
   <div style="color:#17212b; font-size:13px; margin-bottom:5px;"> ..... </div>
 
-    
+  <!-- КНОПКА ОТМЕНЫ ЗАКАЗА -->
+  <div style="text-align:center; padding-bottom: 30px;">
+    <button id="cancel-order-btn" onclick="showCancelModal()" style="
+        background: transparent;
+        border: none;
+        color: #3a5068;
+        font-size: 12px;
+        cursor: pointer;
+        padding: 8px 16px;
+        border-radius: 4px;
+        transition: color 0.2s;
+    " onmouseover="this.style.color='#6ab2f2'" onmouseout="this.style.color='#3a5068'">
+        Отменить заказ
+    </button>
+  </div>
+
+  <!-- МОДАЛКА ОТМЕНЫ -->
+  <div id="cancel-modal" style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: rgba(0,0,0,0.7);
+        align-items: center;
+        justify-content: center;
+  ">
+    <div style="
+        background: #1d2b3a;
+        border: 1px solid #3a5068;
+        border-radius: 12px;
+        padding: 24px 20px;
+        max-width: 320px;
+        width: 90%;
+        text-align: center;
+    ">
+        <div style="color: #6ab2f2; font-size: 16px; font-weight: bold; margin-bottom: 12px;">Отменить заказ?</div>
+        <div style="color: #aaa; font-size: 13px; line-height: 1.6; margin-bottom: 20px; background: #253648; padding: 12px; border-radius: 8px; border-left: 3px solid #e05c5c;">
+            Если вы уже оплатили заказ — данные будут безвозвратно утеряны и средства не будут возвращены. Обратитесь к оператору до отмены.
+        </div>
+        <button onclick="confirmCancelOrder()" style="
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: #2a3a4a;
+            border: 1px solid #3a5068;
+            border-radius: 8px;
+            color: #e05c5c;
+            font-size: 14px;
+            cursor: pointer;
+        ">Отменить заказ</button>
+        <button onclick="hideCancelModal()" style="
+            width: 100%;
+            padding: 12px;
+            background: #2f6ea5;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        ">Продолжить оплату</button>
+    </div>
+  </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/kjua@0.6.0/dist/kjua.min.js"></script>
@@ -1581,7 +1664,7 @@ async function updateConversion() {
             const data = await resp.json();
 
             if (data.ok && data.payment_url) {
-                walletBlock.innerHTML = `<a href="${data.payment_url}" class="sbp-link" target="_blank" rel="noopener">Перейти к оплате (СБП)</a>`;
+                walletBlock.innerHTML = `<a href="${data.payment_url}" class="sbp-pay-btn" target="_blank" rel="noopener">Перейти к оплате (СБП)</a>`;
 
                 // Генерируем QR из payment_url
                 qEl.innerHTML = "";
@@ -2622,6 +2705,24 @@ feed.addEventListener("scroll", () => {
     });
 
 }); // КОНЕЦ DOMContentLoaded
+
+// ===== ОТМЕНА ЗАКАЗА =====
+function showCancelModal() {
+    var modal = document.getElementById('cancel-modal');
+    modal.style.display = 'flex';
+}
+
+function hideCancelModal() {
+    var modal = document.getElementById('cancel-modal');
+    modal.style.display = 'none';
+}
+
+function confirmCancelOrder() {
+    hideCancelModal();
+    clearOrderStorage();
+    if (timerInterval) clearInterval(timerInterval);
+    openScreen('welcome');
+}
 </script>
 
     <!-- ===== РАБОЧИЙ МОБИЛЬНЫЙ СКРОЛЛ ===== -->
