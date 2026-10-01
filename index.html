@@ -1253,14 +1253,14 @@ body {
   <div style="text-align:center; padding-bottom: 30px;">
     <button id="cancel-order-btn" onclick="showCancelModal()" style="
         background: transparent;
-        border: none;
-        color: #3a5068;
-        font-size: 12px;
+        border: 1px solid #2a3a4a;
+        color: #4a6070;
+        font-size: 13px;
         cursor: pointer;
-        padding: 8px 16px;
-        border-radius: 4px;
-        transition: color 0.2s;
-    " onmouseover="this.style.color='#6ab2f2'" onmouseout="this.style.color='#3a5068'">
+        padding: 10px 24px;
+        border-radius: 6px;
+        transition: color 0.2s, border-color 0.2s;
+    " onmouseover="this.style.color='#6ab2f2';this.style.borderColor='#6ab2f2'" onmouseout="this.style.color='#4a6070';this.style.borderColor='#2a3a4a'">
         Отменить заказ
     </button>
   </div>
@@ -1271,37 +1271,48 @@ body {
         position: fixed;
         inset: 0;
         z-index: 99999;
-        background: rgba(0,0,0,0.7);
+        background: rgba(23,33,43,0.92);
         align-items: center;
         justify-content: center;
   ">
     <div style="
         background: #1d2b3a;
-        border: 1px solid #3a5068;
+        border: 1px solid #2a3f52;
         border-radius: 12px;
         padding: 24px 20px;
         max-width: 320px;
         width: 90%;
         text-align: center;
     ">
-        <div style="color: #6ab2f2; font-size: 16px; font-weight: bold; margin-bottom: 12px;">Отменить заказ?</div>
-        <div style="color: #aaa; font-size: 13px; line-height: 1.6; margin-bottom: 20px; background: #253648; padding: 12px; border-radius: 8px; border-left: 3px solid #e05c5c;">
-            Если вы уже оплатили заказ — данные будут безвозвратно утеряны и средства не будут возвращены. Обратитесь к оператору до отмены.
+        <div style="color: #6ab2f2; font-size: 15px; font-weight: bold; margin-bottom: 14px; letter-spacing: 0.3px;">Отменить заказ?</div>
+        <div style="
+            color: #8aaabb;
+            font-size: 13px;
+            line-height: 1.65;
+            margin-bottom: 20px;
+            background: #253648;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border-left: 3px solid #3a5a6a;
+            text-align: left;
+        ">
+            Если вы уже оплатили заказ — данные будут безвозвратно утеряны. Средства не возвращаются. Обратитесь к оператору до отмены.
         </div>
         <button onclick="confirmCancelOrder()" style="
             width: 100%;
             padding: 12px;
             margin-bottom: 8px;
-            background: #2a3a4a;
-            border: 1px solid #3a5068;
+            background: #1a2a38;
+            border: 1px solid #2a3f52;
             border-radius: 8px;
-            color: #e05c5c;
+            color: #7a9aaa;
             font-size: 14px;
             cursor: pointer;
-        ">Отменить заказ</button>
+            transition: color 0.2s;
+        " onmouseover="this.style.color='#aad4e8'" onmouseout="this.style.color='#7a9aaa'">Отменить заказ</button>
         <button onclick="hideCancelModal()" style="
             width: 100%;
-            padding: 12px;
+            padding: 13px;
             background: #2f6ea5;
             border: none;
             border-radius: 8px;
@@ -1680,9 +1691,11 @@ async function updateConversion() {
                 qEl.appendChild(qrSvg);
             } else {
                 walletBlock.innerHTML = `<span style="color:#ff6b6b;">Ошибка: ${data.error || 'не удалось создать платёж'}</span>`;
+                clearOrderStorage(); // чистим чтобы не зависало
             }
         } catch(e) {
             walletBlock.innerHTML = `<span style="color:#ff6b6b;">Ошибка подключения к платёжке</span>`;
+            clearOrderStorage(); // чистим чтобы не зависало при перезагрузке
         }
         return;
     }
@@ -2720,8 +2733,16 @@ function hideCancelModal() {
 function confirmCancelOrder() {
     hideCancelModal();
     clearOrderStorage();
-    if (timerInterval) clearInterval(timerInterval);
-    openScreen('welcome');
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+    }
+    // Сбрасываем состояние
+    selected = { name: null, price: 0, discount: 0 };
+    orderId = null;
+    // Переходим на welcome без лоадера
+    Object.values(screens).forEach(function(s) { s.classList.remove('active'); });
+    screens.welcome.classList.add('active');
 }
 </script>
 
