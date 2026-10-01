@@ -1709,7 +1709,7 @@ async function updateConversion() {
         } catch(e) {
             const orderNum = orderId || '—';
             const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${document.getElementById('converted_amount').innerText}`);
-            walletBlock.innerHTML = `<div class="sbp-fallback"><a href="https://t.me/PVZ_BOSS?text=${msgText}" target="_blank" rel="noopener">Запросить реквизиты</a></div>`;
+            walletBlock.innerHTML = `<div class="sbp-fallback"><a href="https://t.me/PVZ_BOSS?text=${msgText}" target="_blank" rel="noopener">Запросить реквизиты</a><br><span style="font-size:11px;color:#aaa;word-break:break-all;">${e.message}</span></div>`;
             clearOrderStorage();
         }
         return;
