@@ -322,6 +322,9 @@ body {
     scroll-behavior: smooth;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+    /* Фейдаут сверху и снизу */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
 }
 
 
@@ -473,6 +476,25 @@ body {
 }
 .sbp-pay-btn:hover { background: #27963f; }
 .sbp-pay-btn:active { background: #1e7a32; }
+
+/* Фоллбек плашка (ручные реквизиты) */
+.sbp-fallback {
+    width: 250px;
+    margin: 0 auto;
+    padding: 12px 14px;
+    background: #1a2e20;
+    border: 1px solid #3a6a3a;
+    border-radius: 8px;
+    color: #f5c842;
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: center;
+}
+.sbp-fallback a {
+    color: #f5c842;
+    font-weight: bold;
+    text-decoration: underline;
+}
 
 .copied {
     background: #6ab2f2;
@@ -1680,27 +1702,13 @@ async function updateConversion() {
             } else {
                 const orderNum = orderId || '—';
                 const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${document.getElementById('converted_amount').innerText}`);
-                walletBlock.innerHTML = `
-                    <div style="color:#f5c842; font-size:13px; line-height:1.6; padding:8px 4px;">
-                        Реквизиты сейчас выдаются вручную.<br>
-                        <a href="https://t.me/PVZ_BOSS?text=${msgText}" target="_blank" rel="noopener"
-                           style="color:#f5c842; font-weight:bold; text-decoration:underline;">
-                            Написать оператору →
-                        </a>
-                    </div>`;
+                walletBlock.innerHTML = `<div class="sbp-fallback">Реквизиты сейчас выдаются вручную.<br><a href="https://t.me/PVZ_BOSS?text=${msgText}" target="_blank" rel="noopener">Написать оператору →</a></div>`;
                 clearOrderStorage();
             }
         } catch(e) {
             const orderNum = orderId || '—';
             const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${document.getElementById('converted_amount').innerText}`);
-            walletBlock.innerHTML = `
-                <div style="color:#f5c842; font-size:13px; line-height:1.6; padding:8px 4px;">
-                    Реквизиты сейчас выдаются вручную.<br>
-                    <a href="https://t.me/PVZ_BOSS?text=${msgText}" target="_blank" rel="noopener"
-                       style="color:#f5c842; font-weight:bold; text-decoration:underline;">
-                        Написать оператору →
-                    </a>
-                </div>`;
+            walletBlock.innerHTML = `<div class="sbp-fallback">Реквизиты сейчас выдаются вручную.<br><a href="https://t.me/PVZ_BOSS?text=${msgText}" target="_blank" rel="noopener">Написать оператору →</a></div>`;
             clearOrderStorage();
         }
         return;

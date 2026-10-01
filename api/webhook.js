@@ -44,7 +44,7 @@ module.exports = async function handler(req, res) {
                             inline_keyboard: [[
                                 {
                                     text: 'Открыть витрину',
-                                    web_app: { url: 'https://huntersnetplus.github.io/PvZ/' }
+                                    web_app: { url: 'https://pvz-pink.vercel.app/index.html' }
                                 }
                             ]]
                         }
