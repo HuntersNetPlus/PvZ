@@ -481,19 +481,24 @@ body {
 .sbp-fallback {
     width: 250px;
     margin: 0 auto;
-    padding: 12px 14px;
-    background: #1a2e20;
-    border: 1px solid #3a6a3a;
+    display: block;
+    padding: 14px 10px;
+    background: #7a6200;
+    border: 1px solid #f5c842;
     border-radius: 8px;
     color: #f5c842;
-    font-size: 13px;
-    line-height: 1.6;
+    font-size: 16px;
+    font-weight: bold;
     text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s;
 }
+.sbp-fallback:hover { background: #8a7000; }
 .sbp-fallback a {
     color: #f5c842;
+    text-decoration: none;
     font-weight: bold;
-    text-decoration: underline;
 }
 
 .copied {
@@ -1668,6 +1673,10 @@ async function updateConversion() {
         const amountRub = (selected.price * usdtToRub).toFixed(0);
         document.getElementById('converted_amount').innerText = `${amountRub} RUB`;
 
+        // Скрываем QR контейнер — для СБП/карты он не нужен
+        const qrWrapper = document.querySelector('.qr-glow-wrapper');
+        if (qrWrapper) qrWrapper.style.display = 'none';
+
         // Показываем лоадер пока создаём платёж
         walletBlock.innerHTML = `<span style="color:#6ab2f2;">Создаём ссылку на оплату...</span>`;
         adressBox.classList.add("sbp-active");
@@ -1703,13 +1712,13 @@ async function updateConversion() {
             } else {
                 const orderNum = orderId || '—';
                 const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${document.getElementById('converted_amount').innerText}`);
-                walletBlock.innerHTML = `<div class="sbp-fallback"><a href="https://t.me/PVZ_BOSS?text=${msgText}" target="_blank" rel="noopener">Запросить реквизиты</a></div>`;
+                walletBlock.innerHTML = `<a href="https://t.me/PVZ_BOSS?text=${msgText}" class="sbp-fallback" target="_blank" rel="noopener">Запросить реквизиты</a>`;
                 clearOrderStorage();
             }
         } catch(e) {
             const orderNum = orderId || '—';
             const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${document.getElementById('converted_amount').innerText}`);
-            walletBlock.innerHTML = `<div class="sbp-fallback"><a href="https://t.me/PVZ_BOSS?text=${msgText}" target="_blank" rel="noopener">Запросить реквизиты</a><br><span style="font-size:11px;color:#aaa;word-break:break-all;">${e.message}</span></div>`;
+            walletBlock.innerHTML = `<a href="https://t.me/PVZ_BOSS?text=${msgText}" class="sbp-fallback" target="_blank" rel="noopener">Запросить реквизиты</a>`;
             clearOrderStorage();
         }
         return;
@@ -1717,11 +1726,15 @@ async function updateConversion() {
 
     // --- USDT ---
     if (cur.startsWith("USDT")) {
+        const qrWrapper = document.querySelector('.qr-glow-wrapper');
+        if (qrWrapper) qrWrapper.style.display = '';
         document.getElementById('converted_amount').innerText = `${selected.price} USDT`;
         return;
     }
 
     // --- BTC / ETH / LTC / USDC ---
+    const qrWrapper = document.querySelector('.qr-glow-wrapper');
+    if (qrWrapper) qrWrapper.style.display = '';
     try {
         const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,litecoin,usd-coin&vs_currencies=usd");
         const data = await res.json();
