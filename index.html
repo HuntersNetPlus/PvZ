@@ -1690,12 +1690,30 @@ async function updateConversion() {
                 });
                 qEl.appendChild(qrSvg);
             } else {
-                walletBlock.innerHTML = `<span style="color:#ff6b6b;">Ошибка: ${data.error || 'не удалось создать платёж'}</span>`;
-                clearOrderStorage(); // чистим чтобы не зависало
+                const orderNum = orderId || '—';
+                const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${document.getElementById('converted_amount').innerText}`);
+                walletBlock.innerHTML = `
+                    <div style="color:#f5c842; font-size:13px; line-height:1.6; padding:8px 4px;">
+                        Реквизиты сейчас выдаются вручную.<br>
+                        <a href="https://t.me/PVZ_BOSS?text=${msgText}" target="_blank" rel="noopener"
+                           style="color:#f5c842; font-weight:bold; text-decoration:underline;">
+                            Написать оператору →
+                        </a>
+                    </div>`;
+                clearOrderStorage();
             }
         } catch(e) {
-            walletBlock.innerHTML = `<span style="color:#ff6b6b;">Ошибка подключения к платёжке</span>`;
-            clearOrderStorage(); // чистим чтобы не зависало при перезагрузке
+            const orderNum = orderId || '—';
+            const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${document.getElementById('converted_amount').innerText}`);
+            walletBlock.innerHTML = `
+                <div style="color:#f5c842; font-size:13px; line-height:1.6; padding:8px 4px;">
+                    Реквизиты сейчас выдаются вручную.<br>
+                    <a href="https://t.me/PVZ_BOSS?text=${msgText}" target="_blank" rel="noopener"
+                       style="color:#f5c842; font-weight:bold; text-decoration:underline;">
+                        Написать оператору →
+                    </a>
+                </div>`;
+            clearOrderStorage();
         }
         return;
     }
