@@ -6,7 +6,6 @@
 <title>PvZ SHOP</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-// Читаем chatId сразу — до загрузки страницы
 var tgApp = window.Telegram && window.Telegram.WebApp;
 var tgChatId = null;
 if (tgApp) {
@@ -1693,57 +1692,52 @@ async function updateConversion() {
         const qrWrapper = document.querySelector('.qr-glow-wrapper');
         if (qrWrapper) qrWrapper.style.display = 'none';
 
+        // Показываем лоадер пока создаём платёж
+        walletBlock.innerHTML = `<span style="color:#6ab2f2;">Создаём ссылку на оплату...</span>`;
         adressBox.classList.add("sbp-active");
 
-        // Если нет chatId — сразу фоллбек
-        if (!tgChatId) {
-            const orderNum = orderId || '—';
-            const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${amountRub} ₽`);
-            walletBlock.innerHTML = `<a href="https://t.me/PVZ_BOSS?text=${msgText}" class="sbp-fallback" target="_blank" rel="noopener">Запросить реквизиты</a>`;
-            return;
-        }
-
-        walletBlock.innerHTML = `<span style="color:#6ab2f2;">Создаём ссылку на оплату...</span>`;
-
         try {
-            // Шаг 1: создаём платёж в B Pay
-            const bpayResp = await fetch('/api/bpay-create', {
+            const resp = await fetch('/api/bpay-create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    amount:      amountRub,
-                    orderId:     orderId || String(Math.floor(10000 + Math.random() * 90000)),
-                    chatId:      tgChatId,
+                    amount:   amountRub,
+                    orderId:  orderId || String(Math.floor(10000 + Math.random() * 90000)),
+                    chatId:   tgChatId || '0',
                     description: (selected.name || 'Заказ') + ' — PvZ Shop'
                 })
             });
-            const bpayData = await bpayResp.json();
+            const bpayData = await resp.json();
 
             if (bpayData.ok && bpayData.payment_url) {
-                // Шаг 2: отправляем сообщение в бота с кнопкой оплаты
-                await fetch('/api/send-payment', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chatId:      tgChatId,
-                        orderId:     orderId,
-                        productName: selected.name,
-                        amountRub:   amountRub,
-                        paymentUrl:  bpayData.payment_url
-                    })
-                });
+                // Показываем кнопку на странице
+                walletBlock.innerHTML = `<a href="${bpayData.payment_url}" class="sbp-pay-btn" target="_blank" rel="noopener">Перейти к оплате (СБП)</a>`;
 
-                // Показываем подтверждение
-                walletBlock.innerHTML = `<div style="color:#89ED5E; font-size:14px; text-align:center; padding:8px;">Ссылка на оплату отправлена в бота!</div>`;
+                // Параллельно шлём ссылку в бота (fire and forget)
+                if (tgChatId) {
+                    fetch('/api/send-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            chatId:      tgChatId,
+                            orderId:     orderId,
+                            productName: selected.name,
+                            amountRub:   amountRub,
+                            paymentUrl:  bpayData.payment_url
+                        })
+                    });
+                }
             } else {
                 const orderNum = orderId || '—';
-                const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${amountRub} ₽`);
+                const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${document.getElementById('converted_amount').innerText}`);
                 walletBlock.innerHTML = `<a href="https://t.me/PVZ_BOSS?text=${msgText}" class="sbp-fallback" target="_blank" rel="noopener">Запросить реквизиты</a>`;
+                clearOrderStorage();
             }
         } catch(e) {
             const orderNum = orderId || '—';
-            const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${amountRub} ₽`);
+            const msgText = encodeURIComponent(`Здравствуйте! Хочу оплатить заказ #${orderNum}. Сумма: ${document.getElementById('converted_amount').innerText}`);
             walletBlock.innerHTML = `<a href="https://t.me/PVZ_BOSS?text=${msgText}" class="sbp-fallback" target="_blank" rel="noopener">Запросить реквизиты</a>`;
+            clearOrderStorage();
         }
         return;
     }
