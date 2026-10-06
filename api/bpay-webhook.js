@@ -27,7 +27,7 @@ async function notifyFailed(chatId, orderId) {
     const text =
         `❌ <b>Оплата не прошла</b>\n\n` +
         `Заказ #${orderId} отменён или истекло время оплаты.\n\n` +
-        `Используй /order чтобы оформить новый заказ.`;
+        `Обратитесь в поддержку если возникли вопросы.`;
 
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
@@ -101,9 +101,8 @@ module.exports = async function handler(req, res) {
     try {
         if (event === 'payment.success') {
             await notifyUser(chatId, shortId, data.amount);
-        } else if (event === 'payment.failed') {
-            await notifyFailed(chatId, shortId);
         }
+        // payment.failed — не уведомляем пользователя
         // qr.ready, payout.* — игнорируем
     } catch (err) {
         console.error('bpay-webhook notify error:', err);

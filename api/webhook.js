@@ -76,7 +76,7 @@ module.exports = async function handler(req, res) {
                 );
 
             } else {
-                await sendMessage(chatId, 'Используй /start чтобы открыть витрину.');
+                // Неизвестная команда — молчим
             }
         }
 
